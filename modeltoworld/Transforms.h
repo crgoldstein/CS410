@@ -20,8 +20,8 @@ public:
 
 	Eigen::MatrixXd getRST();
 
-// Class varibles
 
+// Class varibles
 private:
 
 		Eigen::MatrixXd getRotate(float vector[], float theta);
@@ -30,7 +30,7 @@ private:
 
 		Eigen::MatrixXd getTranslate(float vector[]);
 
-		// Class varibles
+		//Class varibles
 		float* RotateV;
 		float ThetaV;
 		float ScaleV;
