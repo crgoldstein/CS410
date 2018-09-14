@@ -22,9 +22,10 @@ public:
 	objFile();
 	virtual ~objFile();
 
-	void WriteNewOBJ();
-	Eigen::MatrixXd getVpoints();
-	void setVpoints(Eigen::MatrixXd* points);
+	void WriteNewOBJ( );
+
+	Eigen::MatrixXf getVpoints();
+	void setVpoints(Eigen::MatrixXf* points);
 
 
 private:

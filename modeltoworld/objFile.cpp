@@ -14,6 +14,8 @@
 #include <boost/algorithm/string/classification.hpp> // Include boost::for is_any_of
 #include <boost/algorithm/string/split.hpp> // Include for boost::spli
 
+
+
 using namespace std;
 
 objFile::objFile(string OBJfile, string DriverFile ) {
@@ -60,16 +62,32 @@ objFile::~objFile() {
 }
 
 
-
 void objFile::WriteNewOBJ(){
+	vector<string> NewFile;
 
+	vector< vector<string> > Parts;
+	Parts.push_back(Comments);
+	Parts.push_back(v);
+	Parts.push_back(f);
+
+	for(int i=0; i<Parts.size(); i++){
+		for(int j=0; j<Parts[i].size(); j++){// Comments , v ,vn ,s, f
+			NewFile.push_back(Parts[i][j]);
+		}
+	}
+
+	ofstream output_file("/Users/clairegoldstein/Desktop/example.txt");
+	ostream_iterator<string> output_iterator(output_file, "\n");
+    copy(NewFile.begin(), NewFile.end(), output_iterator);
 
 
 }
 
-Eigen::MatrixXd objFile::getVpoints(){
 
-	Eigen::MatrixXd m (v.size(),4);
+
+Eigen::MatrixXf objFile::getVpoints(){
+
+	Eigen::MatrixXf m (v.size(),4);
 			for(int i=0; i<v.size(); i++)
 			{
 				vector<string> results;
@@ -78,14 +96,14 @@ Eigen::MatrixXd objFile::getVpoints(){
 				m(i,0)=strtof((results[1]).c_str(),0);
 				m(i,1)=strtof((results[2]).c_str(),0);
 				m(i,2)=  strtof((results[3]).c_str(),0);
-				m(i,3)=0;
+				m(i,3)=1;
 
 			}
 	return m;
 }
 
-void objFile::setVpoints(Eigen::MatrixXd* points){
-	Eigen::MatrixXd newV = *points;
+void objFile::setVpoints(Eigen::MatrixXf* points){
+	Eigen::MatrixXf newV = *points;
 
 	for(int i =0; i<v.size(); i++){
 		string x = to_string(newV(0,i));
@@ -94,9 +112,13 @@ void objFile::setVpoints(Eigen::MatrixXd* points){
 	    v[i] ="v "+ x +  " " +y + " " +z;
 	}
 
+	cout<<"New Vpts in setVpoints"<<endl;
 
 	for(int i =0; i<v.size(); i++){
 		cout<<v[i]<<endl;
 	}
+
+
+
 
 }

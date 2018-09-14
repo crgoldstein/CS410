@@ -18,17 +18,17 @@ public:
 	Transforms();
 	virtual ~Transforms();
 
-	Eigen::MatrixXd getRST();
+	Eigen::MatrixXf getRST();
 
 
 // Class varibles
 private:
 
-		Eigen::MatrixXd getRotate(float vector[], float theta);
+		Eigen::MatrixXf getRotate(float vector[], float theta);
 
-		Eigen::MatrixXd getScale(float scale);
+		Eigen::MatrixXf getScale(float scale);
 
-		Eigen::MatrixXd getTranslate(float vector[]);
+		Eigen::MatrixXf getTranslate(float vector[]);
 
 		//Class varibles
 		float* RotateV;
