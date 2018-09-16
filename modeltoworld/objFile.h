@@ -22,7 +22,7 @@ public:
 	objFile();
 	virtual ~objFile();
 
-	void WriteNewOBJ( );
+	void WriteNewOBJ(string Dir );
 
 	Eigen::MatrixXf getVpoints();
 	void setVpoints(Eigen::MatrixXf* points);

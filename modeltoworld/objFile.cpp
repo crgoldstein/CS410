@@ -2,7 +2,7 @@
  * objFile.cpp
  *
  *  Created on: Sep 10, 2018
- *      Author: clairegoldstein
+ *      Author: Claire Goldstein
  */
 
 #include "objFile.h"
@@ -12,7 +12,8 @@
 #include <vector>
 #include <Eigen/Dense>
 #include <boost/algorithm/string/classification.hpp> // Include boost::for is_any_of
-#include <boost/algorithm/string/split.hpp> // Include for boost::spli
+#include <boost/algorithm/string/split.hpp> // Include for boost::split
+
 
 
 
@@ -25,7 +26,7 @@ objFile::objFile(string OBJfile, string DriverFile ) {
 	ifstream file("models/"+OBJfile);// getting the file to match
 
 	if (file.fail()){
-			   // return error
+		// return error
 	}
 	else
 	{
@@ -62,10 +63,10 @@ objFile::~objFile() {
 }
 
 
-void objFile::WriteNewOBJ(){
+void objFile::WriteNewOBJ(string Dir){
 	vector<string> NewFile;
+	vector<vector<string> > Parts;
 
-	vector< vector<string> > Parts;
 	Parts.push_back(Comments);
 	Parts.push_back(v);
 	Parts.push_back(f);
@@ -76,14 +77,17 @@ void objFile::WriteNewOBJ(){
 		}
 	}
 
-	ofstream output_file("/Users/clairegoldstein/Desktop/example.txt");
+
+	int ending = OBJName.length() -4;
+	string newName  = OBJName.substr(0,ending) + "_mw00"+OBJName.substr(ending);
+	//printf(" newFile %s",newName.c_str());
+
+	string file=Dir+"/"+newName;
+
+	ofstream output_file(file);
 	ostream_iterator<string> output_iterator(output_file, "\n");
     copy(NewFile.begin(), NewFile.end(), output_iterator);
-
-
 }
-
-
 
 Eigen::MatrixXf objFile::getVpoints(){
 
@@ -112,12 +116,12 @@ void objFile::setVpoints(Eigen::MatrixXf* points){
 	    v[i] ="v "+ x +  " " +y + " " +z;
 	}
 
-	cout<<"New Vpts in setVpoints"<<endl;
+	/*printf("New Vpts in setVpoints");
 
 	for(int i =0; i<v.size(); i++){
 		cout<<v[i]<<endl;
 	}
-
+*/
 
 
 
