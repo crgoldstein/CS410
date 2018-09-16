@@ -32,6 +32,7 @@ Transforms::Transforms() {
 
 Transforms::~Transforms() {
 	// TODO Auto-generated destructor stub
+	cout<<" Deleting  from Transforms"<<endl;
 }
 
 Eigen::MatrixXf Transforms::getRotate(float vector[], float theta){
@@ -112,7 +113,6 @@ Eigen::MatrixXf Transforms::getRotate(float vector[], float theta){
 		 */
 	    return Final;
 }
-
 
 Eigen::MatrixXf Transforms::getScale(float scale){
 		Eigen::MatrixXf M =Eigen::MatrixXf::Identity(4, 4);

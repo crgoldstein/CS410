@@ -132,6 +132,7 @@ int main(int argc, char* argv[])
 		 O.setVpoints(&RSTPoints);
 
 		 O.WriteNewOBJ();
+
 	}
 
 
