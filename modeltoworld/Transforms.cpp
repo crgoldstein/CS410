@@ -34,7 +34,7 @@ Transforms::~Transforms() {
 	// TODO Auto-generated destructor stub
 }
 
-Eigen::MatrixXf Transforms::getRotate(float vector[], float theta){
+Eigen::MatrixXf Transforms::getRotate( const float vector[], const float theta){
 	//Axis Angle Rotation
 		Eigen::Vector3f Wv(vector[0],vector[1],vector[2]);
 		Eigen::Vector3f Mv(0,0,0);
@@ -113,7 +113,7 @@ Eigen::MatrixXf Transforms::getRotate(float vector[], float theta){
 	    return Final;
 }
 
-Eigen::MatrixXf Transforms::getScale(float scale){
+Eigen::MatrixXf Transforms::getScale(const float scale){
 
 	Eigen::MatrixXf M =Eigen::MatrixXf::Identity(4, 4);
 		M(0,0)=scale;
@@ -124,7 +124,7 @@ Eigen::MatrixXf Transforms::getScale(float scale){
 }
 
 
-Eigen::MatrixXf Transforms::getTranslate(float vector[]){
+Eigen::MatrixXf Transforms::getTranslate( const float vector[]){
 	Eigen::Vector3f Wv(vector[0],vector[1],vector[2]);
 
 	Eigen::MatrixXf M = Eigen::MatrixXf::Identity(4, 4);
@@ -143,7 +143,10 @@ Eigen::MatrixXf  Transforms::getRST(){
     Eigen::MatrixXf ScaleM = getScale(ScaleV);
     Eigen::MatrixXf TranslateM = getTranslate(TranslateV);
 
+
+
     Eigen::MatrixXf M= TranslateM*ScaleM*RotateM ;
+    //cout<<M<<endl;
 
     return M;
 

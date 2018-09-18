@@ -19,11 +19,11 @@
 
 using namespace std;
 
-objFile::objFile(string OBJfile, string DriverFile ) {
+objFile::objFile( const std::string oldFile, const string OBJfile, const string DriverFile ) {
 	// TODO Auto-generated constructor stub
-	DriverName=DriverFile;
-	OBJName=OBJfile;
-	ifstream file("models/"+OBJfile);// getting the file to match
+	DriverName = DriverFile;
+	OBJName = OBJfile;//new File with the mw00 in
+		ifstream file("models/"+oldFile);// getting the file to match
 
 	if (file.fail()){
 		// return error
@@ -35,6 +35,7 @@ objFile::objFile(string OBJfile, string DriverFile ) {
 					File.push_back(line);
 			}
 	}
+
 	for(int i=0; i<File.size(); i++){
 			vector<string> results;
 			boost::split(results, File[i],boost::is_any_of(" "));
@@ -77,17 +78,13 @@ void objFile::WriteNewOBJ(string Dir){
 		}
 	}
 
-
-	int ending = OBJName.length() -4;
-	string newName  = OBJName.substr(0,ending) + "_mw00"+OBJName.substr(ending);
-	//printf(" newFile %s",newName.c_str());
-
-	string file=Dir+"/"+newName;
-
+	string file=Dir+"/"+OBJName;
 	ofstream output_file(file);
 	ostream_iterator<string> output_iterator(output_file, "\n");
     copy(NewFile.begin(), NewFile.end(), output_iterator);
 }
+
+
 
 Eigen::MatrixXf objFile::getVpoints(){
 
@@ -116,7 +113,7 @@ void objFile::setVpoints(Eigen::MatrixXf* points){
 	    v[i] ="v "+ x +  " " +y + " " +z;
 	}
 
-	/*printf("New Vpts in setVpoints");
+/*printf("New Vpts in setVpoints");
 
 	for(int i =0; i<v.size(); i++){
 		cout<<v[i]<<endl;

@@ -18,7 +18,7 @@ using namespace std;
 class objFile {
 
 public:
-	objFile(std::string OBJfile, std::string DriverFile);
+	objFile(const string oldFile, const string OBJfile, const string DriverFile);
 	objFile();
 	virtual ~objFile();
 

@@ -2,7 +2,7 @@
  * Transforms.h
  *
  *  Created on: Sep 6, 2018
- *      Author: clairegoldstein
+ *      Author: Claire Goldstein
  */
 
 #ifndef TRANSFORMS_H_
@@ -24,11 +24,11 @@ public:
 // Class varibles
 private:
 
-		Eigen::MatrixXf getRotate(float vector[], float theta);
+		Eigen::MatrixXf getRotate(const float vector[], const float theta);
 
-		Eigen::MatrixXf getScale(float scale);
+		Eigen::MatrixXf getScale(const float scale);
 
-		Eigen::MatrixXf getTranslate(float vector[]);
+		Eigen::MatrixXf getTranslate(const float vector[]);
 
 		//Class varibles
 		float* RotateV;
