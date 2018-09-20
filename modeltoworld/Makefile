@@ -20,4 +20,8 @@ objFile.o: objFile.cpp  objFile.h
 	
 clean: 
 	-rm *.o modeltoworld
-	
+
+package: 
+	tar -cvf Goldstein-Claire-P1.tar main.cpp Transforms.cpp Transforms.h objFile.h objFile.cpp Makefile README.md eigen-eigen-b9cd8366d4e8
+
+

@@ -2,7 +2,7 @@
  * Transforms.cpp
  *
  *  Created on: Sep 6, 2018
- *      Author: clairegoldstein
+ *      Author: Claire Goldstein
  */
 
 #include "Transforms.h"

@@ -39,9 +39,6 @@ private:
 	vector<string> s;
 	vector<string> f;
 
-
-
-
 };
 
 #endif /* OBJFILE_H_ */

@@ -23,7 +23,10 @@ objFile::objFile( const std::string oldFile, const string OBJfile, const string 
 	// TODO Auto-generated constructor stub
 	DriverName = DriverFile;
 	OBJName = OBJfile;//new File with the mw00 in
-		ifstream file("models/"+oldFile);// getting the file to match
+
+	//ifstream file("models/"+oldFile);// getting the file to match
+
+	ifstream file(oldFile);// getting the file to match
 
 	if (file.fail()){
 		// return error
