@@ -90,7 +90,12 @@ int TranslateOBJfiles(string file )
 	{
 		string line;
 		while(getline(driver,line)){
+			if (line.find("#") != std::string::npos) {
+			    //Take out comment lines
+			}
+			else{
 			Driver.push_back(line);
+			}
 		}
 
 	}
