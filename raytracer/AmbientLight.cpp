@@ -38,6 +38,14 @@ AmbientLight::AmbientLight(string Driver){
 }
 
 
+Eigen::Vector3f AmbientLight:: getVector(){
+	Eigen::Vector3f vec;
+	 vec << red, green, blue;
+	 return vec;
+
+}
+
+
 AmbientLight::~AmbientLight() {
 	// TODO Auto-generated destructor stub
 }

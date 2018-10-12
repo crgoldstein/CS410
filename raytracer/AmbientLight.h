@@ -19,10 +19,11 @@ class AmbientLight {
 public:
 	AmbientLight();
 	AmbientLight(string Driver);
+	Eigen::Vector3f getVector();
 	virtual ~AmbientLight();
 
 //private:
-	float red ;
+	float red;
 	float green ;
 	float blue ;
 

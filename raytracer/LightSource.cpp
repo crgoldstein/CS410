@@ -33,16 +33,30 @@ LightSource::LightSource(string Driver){
 			x =stof((line[1]).c_str(),0);
 			y = stof((line[2]).c_str(),0);
 			z = stof((line[3]).c_str(),0);
-			w = stof((line[3]).c_str(),0);
+			w = stof((line[4]).c_str(),0);
 
 			red =stof((line[5]).c_str(),0);
 		 	green = stof((line[6]).c_str(),0);
 			blue = stof((line[7]).c_str(),0);
 
+}
 
+Eigen::Vector3f LightSource:: getBrightnessVector(){
+
+	Eigen::Vector3f B;
+	B<< red,green,blue;
+	return B;
+}
+Eigen::Vector3f LightSource:: getXYZvector(){
+
+	Eigen::Vector3f xyz;
+	xyz << x,y,z;
+	return xyz;
 
 
 }
+
+
 
 LightSource::~LightSource() {
 	// TODO Auto-generated destructor stub

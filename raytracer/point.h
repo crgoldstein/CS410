@@ -27,6 +27,9 @@ public:
 	float getY();
 	float getZ();
 	string toString();
+	point Vector2Point(const Eigen::Vector3f &v);
+
+
 
 private:
 	float x,y,z;

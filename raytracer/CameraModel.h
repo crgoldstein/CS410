@@ -12,6 +12,10 @@
 
 #include "AmbientLight.h"
 #include "LightSource.h"
+#include "objFile.h"
+#include "point.h"
+#include "Ray.h"
+#include "ColorTriple.h"
 
 #include <vector>
 #include <Eigen/Dense>
@@ -25,41 +29,40 @@ class CameraModel {
 
 public:
 	CameraModel();
-	CameraModel(vector<string> &Driver, vector<LightSource> &LightS,AmbientLight &Ambient, vector<string> &Objs);
+	CameraModel(vector<string> &Driver, vector<LightSource> &LightS,AmbientLight &Ambient, vector<objFile> &Objs);
 	virtual ~CameraModel();
 	void test();
-	void Run();
-
+	vector<vector<ColorTriple> >  Run();
 
 //private:
 
 	Eigen::Vector3f pixelPt(int i, int j);
 	float* RayTriangleInterection(Eigen::Vector3f &L, Eigen::Vector3f &D, Eigen::Vector3f &A, Eigen::Vector3f &B ,Eigen::Vector3f &C);
 
+	ColorTriple  RAY_CAST( Eigen::Vector3f pixel, Eigen::Vector3f Direction);
+	ColorTriple  COLOR_PIXEL (Eigen::Vector3f PointonFace, Face face);
+
 // Class Variables
+	point EyeV;
+	point LookV;
+	point UpV;
 
-	float EyeV[3];
-	float LookV[3];
-	float UpV[3];
-
-	float Uv[3];// x
-	float Vv[3];// y
-	float Wv[3];// z
-
+	point Uv;// x
+	point Vv;// y
+	point Wv;// z
 
 	//distance from the focal point to the image plane (near clipping plane)
 	float near;
-
 	//indicate the minimum and maximum extend of the bounded image
 	//rectangle on the infinite image plane in the camera horizontal and vertical directions respectively.
 	float left,right,top,bottom;
-
 	//the resolution values separately indicate the pixel sampling resolution across the horizontal and vertical dimensions of the bounded rectangle.
-	float width, height;
+	int width, height;
 
-	vector<LightSource> LightSources;
+	vector<LightSource> LightSourcesList;
 	AmbientLight AmbientLight;
-	vector<string> OBJs;
+	vector<objFile> OBJs;
+	vector<vector<ColorTriple> > FileColor;
 };
 
 #endif /* CAMERAMODEL_H_ */

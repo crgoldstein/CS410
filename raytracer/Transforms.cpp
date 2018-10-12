@@ -22,6 +22,8 @@ Transforms::Transforms(float rotateP[], float theta,  float scale, float transla
 	ThetaV =theta;
 	ScaleV = scale;
 	TranslateV = translate;
+
+
 }
 
 Transforms::Transforms() {
@@ -45,7 +47,7 @@ Eigen::MatrixXf Transforms::getRotate( const float vector[], const float theta){
 
 		//Need 2 other unit length vectors mutually orthongonal to W.
 			//1. find a vector M that is not parallel to W.
-			Mv = Wv;
+			Mv <<abs(Wv(0)) , abs(Wv(1)), abs(Wv(2));
 
 			float MinWv = Wv[0];
 				for(int i =1 ; i<3; i++){
@@ -79,7 +81,7 @@ Eigen::MatrixXf Transforms::getRotate( const float vector[], const float theta){
 
 
 //Rotate by theta about the xz-axis
-		double radian =	(theta /180.0) * M_PI;
+		double radian =	(theta /180.0) * M_PI ;
 		double ca = cos(radian);
 		double sa = sin(radian);
 
@@ -96,7 +98,7 @@ Eigen::MatrixXf Transforms::getRotate( const float vector[], const float theta){
 		Final = mT * z * m;
 
 		/*Checks for orthongonality
-				cout<< "Mv "<< Mv<<endl;
+				cout<< "Mv \n"<< Mv<<endl;
 
 				cout<<" Uv: \n"<< Uv<<endl;
 				cout<<" Vv: \n"<< Vv<<endl;
@@ -106,10 +108,12 @@ Eigen::MatrixXf Transforms::getRotate( const float vector[], const float theta){
 				cout<<" mT: \n"<< mT<<endl;
 				cout<<" m*mT: \n"<< m*mT<<endl;//Should be IDmaxtrix
 
-				cout<<"z \n"<<z<<endl;
 
-				cout<<"Final \n"<<Final<<endl;
-		 */
+				cout<<" z \n"<<z<<endl;
+
+				cout<<"Final mT*z*m \n"<<Final<<endl;
+				*/
+
 	    return Final;
 }
 
@@ -133,9 +137,7 @@ Eigen::MatrixXf Transforms::getTranslate( const float vector[]){
 	M(2,3)= vector[2];
 
     return M;
-
 }
-
 
 Eigen::MatrixXf Transforms::getRST(){
 
@@ -143,10 +145,7 @@ Eigen::MatrixXf Transforms::getRST(){
     Eigen::MatrixXf ScaleM = getScale(ScaleV);
     Eigen::MatrixXf TranslateM = getTranslate(TranslateV);
 
-
-
     Eigen::MatrixXf M= TranslateM*ScaleM*RotateM ;
-    //cout<<M<<endl;
 
     return M;
 

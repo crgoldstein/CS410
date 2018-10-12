@@ -13,6 +13,7 @@
 #include <Eigen/Dense>
 #include <vector>
 #include "point.h"
+#include "Materials.h"
 #include <string>
 
 using namespace std;
@@ -20,9 +21,10 @@ using namespace std;
 class Face {
 public:
 	Face();
-	Face(point A, point B, point C, string Materials);
+	Face(point A, point B, point C, Materials M);
 	void calulateNormal();
 	Eigen::Vector3f getNormal();
+	void setNormal( Eigen::Vector3f  n);
 	virtual ~Face();
 	string toString();
 
@@ -31,7 +33,7 @@ public:
 	point A;
 	point B;
 	point C;
-	string Materials;
+	Materials Material;
 	Eigen::Vector3f normal;
 
 

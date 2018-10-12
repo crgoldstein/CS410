@@ -4,7 +4,6 @@
  *  Created on: Oct 8, 2018
  *      Author: clairegoldstein
  */
-
 #include "point.h"
 
 point::point() {
@@ -29,6 +28,14 @@ float  point:: getY(){
 float point:: getZ(){
 	return this->z;
 }
+
+point point:: Vector2Point(const Eigen::Vector3f &v){
+
+	point X(v(0),v(1),v(2));
+	return X;
+}
+
+
 Eigen::Vector3f point::getVector(){
 	Eigen::Vector3f point;
 	point << x,y,z;

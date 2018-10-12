@@ -6,90 +6,80 @@
  */
 
 #include "objFile.h"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <Eigen/Dense>
+#include "Transforms.h"
 #include <boost/algorithm/string/classification.hpp> // Include boost::for is_any_of
 #include <boost/algorithm/string/split.hpp> // Include for boost::split
 
 
-
-
 using namespace std;
 
-objFile::objFile( const std::string oldFile, const string OBJfile, const string DriverFile ) {
-	// TODO Auto-generated constructor stub
-	DriverName = DriverFile;
-	OBJName = OBJfile;//new File with the mw00 in
+objFile::objFile(const string Driver) {
 
-	//ifstream file("models/"+oldFile);// getting the file to match
+		vector<string> results;
+		boost::split(results, Driver,boost::is_any_of(" "));
+		// 0	1	2	3 	4  5  6  7    8      9
+		//model 1.0 1.0 0.0 30 2 0.0 0.0 -15.0 cube_centered.obj
 
-	ifstream file(oldFile);// getting the file to match
+		float rotate[3] = {strtof((results[1]).c_str(),0), strtof((results[2]).c_str(),0) ,strtof((results[3]).c_str(),0)};
+		float theta= strtof((results[4]).c_str(),0);
+		float scale = strtof((results[5]).c_str(),0);
+		float Transform[3]= {strtof((results[6]).c_str(),0), strtof((results[7]).c_str(),0) ,strtof((results[8]).c_str(),0)};
 
-	if (file.fail()){
-		// return error
-	}
-	else
-	{
-			string line;
-			while(getline(file,line)){
-					File.push_back(line);
-			}
-	}
+		// send to new Object
+		Transforms T(rotate, theta, scale, Transform);
 
-	for(int i=0; i<File.size(); i++){
-			vector<string> results;
-			boost::split(results, File[i],boost::is_any_of(" "));
-
-			if(results[0].compare("#") == 0){
-				Comments.push_back(File[i]);
-			}
-			if(results[0].compare("v") == 0){
-					v.push_back(File[i]);
-			}
-			if(results[0].compare("vn") == 0){
-					vn.push_back(File[i]);
-			}
-			if(results[0].compare("s") == 0){
-					s.push_back(File[i]);
-			}
-			if(results[0].compare("f") == 0){
-					f.push_back(File[i]);
-			}
-	}
+		//Reading OBJ file
+		string Material = ReadOBJ(results[9]);
+		//Rotating and Updating the V poitns
+		Eigen::MatrixXf  RST = T.getRST();
+		Eigen::MatrixXf  Vpts = getVpoints();
+	 	Eigen::MatrixXf  RSTPoints = RST*Vpts.transpose();
+	 	setVpoints(&RSTPoints);
+	 	//Make Face Objects that have points ABC and Materials
+	 	MakeFaces(Material);
 
 }
 
-objFile::~objFile() {
-	// TODO Auto-generated destructor stub
-}
+string objFile:: ReadOBJ(const string fileName){
+	string location = "drivers_models/" +fileName;
+	ifstream file(location);// getting the file to match
 
-
-void objFile::WriteNewOBJ(string Dir){
-	vector<string> NewFile;
-	vector<vector<string> > Parts;
-
-	Parts.push_back(Comments);
-	Parts.push_back(v);
-	Parts.push_back(f);
-
-	for(int i=0; i<Parts.size(); i++){
-		for(int j=0; j<Parts[i].size(); j++){// Comments , v ,vn ,s, f
-			NewFile.push_back(Parts[i][j]);
+		if (! file.is_open())
+		{
+				cout <<"Error opening .OBJ file" <<endl;
+				cout<<"Failed at "<<  location <<endl;
+				exit (1);
 		}
-	}
+		else
+		{
+		       string line;
+			   while(getline(file,line)){
+			 		 File.push_back(line);
+			 			}
+		}
 
-	string file=Dir+"/"+OBJName;
-	ofstream output_file(file);
-	ostream_iterator<string> output_iterator(output_file, "\n");
-    copy(NewFile.begin(), NewFile.end(), output_iterator);
+			 	string Material ="";
+			 	for(int i=0; i<File.size(); i++)
+			 	{
+			 			vector<string> objLine;
+			 			boost::split(objLine, File[i],boost::is_any_of(" "));
+
+			 			if(objLine[0].compare("v") == 0)
+			 					v.push_back(File[i]);
+
+			 			if(objLine[0].compare("f") == 0)
+			 					f.push_back(File[i]);
+
+			 			if (objLine[0].compare("mtllib")==0)
+			 				Material = objLine[1];
+
+			 	}
+	return Material;
+
 }
 
 
-
-Eigen::MatrixXf objFile::getVpoints(){
+Eigen::MatrixXf objFile:: getVpoints(){
 
 	Eigen::MatrixXf m (v.size(),4);
 			for(int i=0; i<v.size(); i++)
@@ -101,10 +91,11 @@ Eigen::MatrixXf objFile::getVpoints(){
 				m(i,1)=strtof((results[2]).c_str(),0);
 				m(i,2)=  strtof((results[3]).c_str(),0);
 				m(i,3)=1;
-
 			}
+
 	return m;
 }
+
 
 void objFile::setVpoints(Eigen::MatrixXf* points){
 	Eigen::MatrixXf newV = *points;
@@ -115,14 +106,61 @@ void objFile::setVpoints(Eigen::MatrixXf* points){
 		string z = to_string(newV(2,i));
 	    v[i] ="v "+ x +  " " +y + " " +z;
 	}
+}
 
-/*printf("New Vpts in setVpoints");
 
-	for(int i =0; i<v.size(); i++){
-		cout<<v[i]<<endl;
+void objFile:: MakeFaces(string MaterialString){
+	Materials M(MaterialString);
+
+	for(int i =0; i< f.size(); i++){
+        //0   1    2    3
+		//f 2//1 4//1 1//1
+
+		vector<string> results;
+		boost::split(results, f[i],boost::is_any_of(" "));
+
+		    vector<string> SlashA;
+			boost::split(SlashA, results[1] ,boost::is_any_of("/"));
+			int A = stoi(SlashA[0]);// string to int
+
+			vector<string> SlashB;
+			boost::split(SlashB, results[2],boost::is_any_of("/"));
+			int B = stoi(SlashB[0]);
+
+			vector<string> SlashC;
+			boost::split(SlashC, results[3],boost::is_any_of("/"));
+			int C = stoi(SlashC[0]);
+
+		//Make points
+		point Apoint=MakePointFromV(A);
+		point Bpoint=MakePointFromV(B);
+		point Cpoint=MakePointFromV(C);
+
+		Face F(Apoint, Bpoint, Cpoint, M);
+
+
+
+		Faces.push_back(F);
+
 	}
-*/
+}
 
+point objFile:: MakePointFromV(int Index){
+	Index= Index - 1;
+	vector<string> results;
+	boost::split(results, v[Index],boost::is_any_of(" "));
 
+	float a = strtof((results[1]).c_str(),0);
+	float b = strtof((results[2]).c_str(),0);
+	float c = strtof((results[3]).c_str(),0);
+
+    point newPoint(a,b,c);
+    return newPoint;
 
 }
+
+
+objFile::~objFile() {
+	// TODO Auto-generated destructor stub
+}
+
