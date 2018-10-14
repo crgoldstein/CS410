@@ -20,9 +20,9 @@ using namespace std;
 
 CameraModel::CameraModel() {}
 
-CameraModel::CameraModel(vector<string> &Driver, vector<LightSource> &LightS, class AmbientLight &Ambient, vector<objFile> &Objs) {
+CameraModel::CameraModel(vector<string> &Driver, vector<LightSource> &LightS,  AmbientLight &ambient, vector<objFile> &Objs) {
 	LightSourcesList = LightS;
-	AmbientLight = Ambient;
+	Ambient = ambient;
 	OBJs = Objs;
 
 		for (int i =  0; i < Driver.size(); i++)
@@ -120,9 +120,9 @@ void CameraModel:: test(){
 						cout<<"LightSource: blue "<< LightSourcesList[a].blue<<endl;
 					}
 
-					cout<<"AmbientLight.red " << AmbientLight.red<<endl;
-					cout<<"AmbientLight.green " << AmbientLight.green<<endl;
-					cout<<"AmbientLight.blue " << AmbientLight.blue<<"\n\n"<<endl;
+					cout<<"AmbientLight.red " << Ambient.red<<endl;
+					cout<<"AmbientLight.green " << Ambient.green<<endl;
+					cout<<"AmbientLight.blue " << Ambient.blue<<"\n\n"<<endl;
 
 
 
@@ -242,7 +242,7 @@ ColorTriple CameraModel:: RAY_CAST(Eigen::Vector3f pixel, Eigen::Vector3f Direct
 					}//end ForEach for Objects
 
 		if (HitsSomething){
-			//cout<<"RAY_CAST :HitsSomething TRUE!!"<<endl;
+			cout<<"RAY_CAST :HitsSomething TRUE!!"<<endl;
 			//cout<<"RAY_CAST: Pixel\n"<< pixel<<endl;
 			//cout<<"RAY_CAST: Direction\n"<< Direction<<endl;
 			//cout<<"RAY_CAST: MinT\n"<< minT<<endl;
@@ -273,7 +273,7 @@ ColorTriple CameraModel:: COLOR_PIXEL(Ray ray, Face face ){
 	Eigen::MatrixXf Kd = Eigen::MatrixXf::Identity(3, 3); Kd(0,0)=face.Material.KdRed; Kd(1,1)=face.Material.KdGreen; Kd(2,2)=face.Material.KdBlue;
 
 				// Ka * Brightness of AmbientLight
-	Illumination = Ka * AmbientLight.getVector(); cout<<"Illumination Ambieint Light "<<Illumination(0) << " "<<Illumination(1) << " "<<Illumination(2) << endl;
+	Illumination = Ka * Ambient.getVector(); cout<<"Illumination Ambieint Light "<<Illumination(0) << " "<<Illumination(1) << " "<<Illumination(2) << endl;
 
     //for every light socurces :
 	for( LightSource L : LightSourcesList ){

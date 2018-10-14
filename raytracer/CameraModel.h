@@ -29,7 +29,7 @@ class CameraModel {
 
 public:
 	CameraModel();
-	CameraModel(vector<string> &Driver, vector<LightSource> &LightS,AmbientLight &Ambient, vector<objFile> &Objs);
+	CameraModel(vector<string> &Driver, vector<LightSource> &LightS,AmbientLight &ambient, vector<objFile> &Objs);
 	virtual ~CameraModel();
 	void test();
 	vector<vector<ColorTriple> >  Run();
@@ -60,7 +60,7 @@ public:
 	int width, height;
 
 	vector<LightSource> LightSourcesList;
-	AmbientLight AmbientLight;
+	AmbientLight Ambient;
 	vector<objFile> OBJs;
 	vector<vector<ColorTriple> > FileColor;
 };

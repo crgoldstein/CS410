@@ -16,7 +16,7 @@ PPMFile::PPMFile(string FileName){
 	filename =FileName;
 }
 void PPMFile::write(vector<vector<ColorTriple> > FileColor){
-
+cout<<"Write to a File"<<endl;
 	  ofstream file(filename);
 	  if (file.is_open())
 	  {
