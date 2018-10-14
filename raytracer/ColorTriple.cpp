@@ -16,7 +16,6 @@ ColorTriple::ColorTriple() {
 }
 
 ColorTriple:: ColorTriple(float r, float g , float b){
-cout<<" IN ColorTriple r g b "<< r<< " "<<g <<  " "<< b <<" "<<endl;
 	red = r * 255;
 	green =  g* 255;
 	blue =  b* 255;

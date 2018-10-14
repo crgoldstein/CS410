@@ -32,7 +32,7 @@ CameraModel::CameraModel(vector<string> &Driver, vector<LightSource> &LightS, cl
 
 					if (line.size() ==4){
 
-							float a =stof((line[1]).c_str(),0);
+							float a = stof((line[1]).c_str(),0);
 							float b = stof((line[2]).c_str(),0);
 							float c = stof((line[3]).c_str(),0);
 							point X(a, b, c);
@@ -77,7 +77,7 @@ CameraModel::CameraModel(vector<string> &Driver, vector<LightSource> &LightS, cl
 				Eigen::Vector3f uv(0,0,0);
 				Eigen::Vector3f vv(0,0,0);
 
-				wv << ev - lv;///?????
+				wv << ev - lv;
 				wv = wv.normalized();
 				uv = upv.cross(wv);
 				uv = uv.normalized();
@@ -242,20 +242,17 @@ ColorTriple CameraModel:: RAY_CAST(Eigen::Vector3f pixel, Eigen::Vector3f Direct
 					}//end ForEach for Objects
 
 		if (HitsSomething){
-			cout<<"RAY_CAST :HitsSomething TRUE!!"<<endl;
+			//cout<<"RAY_CAST :HitsSomething TRUE!!"<<endl;
 			//cout<<"RAY_CAST: Pixel\n"<< pixel<<endl;
 			//cout<<"RAY_CAST: Direction\n"<< Direction<<endl;
 			//cout<<"RAY_CAST: MinT\n"<< minT<<endl;
-			cout<<"RAY_CAST: ClosestFace\n"<< closestFace.toString()<<endl;
-
+			//cout<<"RAY_CAST: ClosestFace\n"<< closestFace.toString()<<endl;
 
 			point p;
 			Ray ray(p.Vector2Point(pixel), minT, p.Vector2Point(Direction));
 
 			Eigen::Vector3f PointonFace; PointonFace = (pixel) + minT*(Direction);
-
-
-			return COLOR_PIXEL(PointonFace, closestFace);
+			return COLOR_PIXEL(ray, closestFace);
 		}
 		else {
 
@@ -264,12 +261,11 @@ ColorTriple CameraModel:: RAY_CAST(Eigen::Vector3f pixel, Eigen::Vector3f Direct
 }
 
 
-ColorTriple CameraModel:: COLOR_PIXEL(Eigen::Vector3f PointonFace, Face face ){
+ColorTriple CameraModel:: COLOR_PIXEL(Ray ray, Face face ){
 
-	if (PointonFace.normalized().dot(face.normal) < 0){// normal is pointing to the inside of the object
-					face.setNormal(-face.normal);// Flip the normal;
+	if (ray.Direction.getVector().normalized().dot(face.normal) < 0){// normal is pointing to the inside of the object
+		face.setNormal(-face.normal);// Flip the normal;
 	}
-
 	//I= kaBa + SUM( KdBd(N dot L) + specular Light)
 	Eigen::Vector3f Illumination(0,0,0) ;
 
@@ -283,25 +279,19 @@ ColorTriple CameraModel:: COLOR_PIXEL(Eigen::Vector3f PointonFace, Face face ){
 	for( LightSource L : LightSourcesList ){
 		//Compute red, green and blue based on illumination
 			//Diffusse Illumination : kd * brighness of light scorce  *(L dot normal)(this is a scalar)
-		    cout<< "Diffusse Illumination : kd * brighness of light scorce "<< Kd * L.getBrightnessVector() <<endl;
 
-		    //toL = ptL - ptos; toL = toL / toL.norm()
-		    Eigen::Vector3f l =  L.getXYZvector() - PointonFace;
-		    l= l.normalized();  cout  <<"L.getXYZvector().normalized() "<<l(0)<< " "<<l(1)<< " "<<l(2)<< " "<<endl;
-		    Eigen::Vector3f norm= face.getNormal();cout<<"face Normal "<<norm(0)<< " "<<norm(1)<< " "<<norm(2)<< " "<<endl;
+		   Eigen::Vector3f lightS =  L.getXYZvector();
+		   lightS = lightS.normalized();
+		     //toL = ptL - ptos; toL = toL / toL.norm()
+		   Eigen::Vector3f norm= face.getNormal();
 
-		    cout<<" l.dot(norm) "<< l.dot(norm)<<endl;
+		   if( lightS.dot(norm) >= 0 )// the light is on the back side of the object
+		    	Illumination +=  Kd * L.getBrightnessVector() * lightS.dot(norm) ;
 
-		   if( l.dot(norm)  >= 0 )// the light is on the back side of the object
-		    	Illumination +=  Kd * L.getBrightnessVector() * l.dot(norm) ;
-		   else
-		    	Illumination +=  Kd * L.getBrightnessVector();
 	}
 
-    cout<<"Illumination Ambieint + Diffusse Light "<<Illumination(0) << " "<<Illumination(1) << " "<<Illumination(2) << endl;
-	// write the resulting RGB into the pixel
+    // write the resulting RGB into the pixel
 	return ColorTriple(Illumination(0),Illumination(1),Illumination(2));
-
 
 }
 
@@ -315,7 +305,6 @@ vector<vector<ColorTriple> > CameraModel:: Run(){
 			       //fire a ray into the scene and determine the first( the smallest  t value) visible surface
 
 				// make this a RAY object:
-					cout<<x <<", "<<y<< endl;
 					Eigen::Vector3f pixel = pixelPt(x,y);
 				    Eigen::Vector3f Direction = (pixel - EyeV.getVector()); //(pixel point)- eye
 

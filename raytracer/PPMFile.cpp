@@ -16,15 +16,6 @@ PPMFile::PPMFile(string FileName){
 	filename =FileName;
 }
 void PPMFile::write(vector<vector<ColorTriple> > FileColor){
-	cout<<" write this to file these are just Red values  "<<endl;
-	 for(int x =0; x<FileColor.size(); x++){
-		    	for(int y=0; y<FileColor[0].size(); y++){
-		    		cout<<FileColor[x][y].getRed()<<" ";
-		    	}
-		    	cout<<endl;
-		}
-
-
 
 	  ofstream file(filename);
 	  if (file.is_open())

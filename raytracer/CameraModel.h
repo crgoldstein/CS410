@@ -40,7 +40,7 @@ public:
 	float* RayTriangleInterection(Eigen::Vector3f &L, Eigen::Vector3f &D, Eigen::Vector3f &A, Eigen::Vector3f &B ,Eigen::Vector3f &C);
 
 	ColorTriple  RAY_CAST( Eigen::Vector3f pixel, Eigen::Vector3f Direction);
-	ColorTriple  COLOR_PIXEL (Eigen::Vector3f PointonFace, Face face);
+	ColorTriple  COLOR_PIXEL (Ray ray, Face face);
 
 // Class Variables
 	point EyeV;

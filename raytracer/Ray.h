@@ -27,7 +27,6 @@ public:
 	Eigen::Vector3f getRayVector();
 	string toString();
 
-private:
 	point Pixel;
 	float T;
 	point Direction;
