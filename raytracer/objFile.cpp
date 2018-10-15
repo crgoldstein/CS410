@@ -108,9 +108,9 @@ void objFile::setVpoints(Eigen::MatrixXf &points) {
 }
 
 
-void objFile:: MakeFaces(string MaterialString){
+void objFile:: MakeFaces(string &MaterialString){
 	Materials M(MaterialString);
-
+	point Apoint; point Bpoint; point Cpoint;
 	for(int i =0; i< f.size(); i++){
         //0   1    2    3
 		//f 2//1 4//1 1//1
@@ -131,10 +131,9 @@ void objFile:: MakeFaces(string MaterialString){
 			int C = stoi(SlashC[0]);
 
 		//Make points
-		point Apoint=MakePointFromV(A);
-		point Bpoint=MakePointFromV(B);
-		point Cpoint=MakePointFromV(C);
-
+		Apoint = MakePointFromV(A);
+		Bpoint = MakePointFromV(B);
+		Cpoint = MakePointFromV(C);
 		Face F(Apoint, Bpoint, Cpoint, M);
 
 

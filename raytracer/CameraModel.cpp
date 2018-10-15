@@ -131,16 +131,19 @@ ColorTriple CameraModel:: RAY_CAST(Eigen::Vector3f pixel, Eigen::Vector3f Direct
 	float minT = numeric_limits<float>::max();
 	Face closestFace;
 	bool HitsSomething = false;
-
+	Eigen::Vector3f A;
+	Eigen::Vector3f B;
+	Eigen::Vector3f C;
+	float beta, gamma,t;
 				for( objFile object : OBJs){
 					   	for(Face face : object.Faces ){
 
-					   			Eigen::Vector3f A = face.A.getVector();
-					   			Eigen::Vector3f B = face.B.getVector();
-					   			Eigen::Vector3f C = face.C.getVector();
+					   			 A = face.A.getVector();
+					   			 B = face.B.getVector();
+					   			 C = face.C.getVector();
 
 					   			BGT = RayTriangleInterection(pixel,Direction,A,B,C);
-					   			float beta = BGT[0]; float gamma = BGT[1]; float t = BGT[2];
+					   			beta = BGT[0];  gamma = BGT[1];  t = BGT[2];
 					   			if (beta >=0 && gamma >=0 && beta + gamma <=1 && t>0){// checking if the ray actually hits the face
 					   				HitsSomething=true;
 					   				if (t < minT){ // checking if its the first visible surface aka the Smallest T value
@@ -152,7 +155,7 @@ ColorTriple CameraModel:: RAY_CAST(Eigen::Vector3f pixel, Eigen::Vector3f Direct
 					}//end ForEach for Objects
 
 		if (HitsSomething){
-			cout<<"RAY_CAST :HitsSomething TRUE!!"<<endl;
+			//cout<<"RAY_CAST :HitsSomething TRUE!!"<<endl;
 			point p;
 			Ray ray(p.Vector2Point(pixel), minT, p.Vector2Point(Direction));
 
@@ -195,6 +198,8 @@ ColorTriple CameraModel:: COLOR_PIXEL(Ray &ray,  Face &face ){
 vector<vector<ColorTriple> > CameraModel:: Run(){
 
 	vector<vector<ColorTriple> > FileColor;
+	Eigen::Vector3f pixel;
+	Eigen::Vector3f Direction;
 
 	for(int x =0; x < height ; x++){
 		vector<ColorTriple> temp;
@@ -203,8 +208,8 @@ vector<vector<ColorTriple> > CameraModel:: Run(){
 			       //fire a ray into the scene and determine the first( the smallest  t value) visible surface
 
 				// make this a RAY object:
-					Eigen::Vector3f pixel = pixelPt(x,y);
-				    Eigen::Vector3f Direction = (pixel - EyeV.getVector()); //(pixel point)- eye
+				pixel = pixelPt(x,y);
+				Direction = (pixel - EyeV.getVector()); //(pixel point)- eye
 
 				    // for each pixel hit into each face
 				    ColorTriple rgb = RAY_CAST(pixel,Direction);

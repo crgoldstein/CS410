@@ -32,7 +32,7 @@ public:
 	CameraModel(vector<string> &Driver, vector<LightSource> &LightS,AmbientLight &ambient, vector<objFile> &Objs);
 	virtual ~CameraModel();
 	void testP2();
-	vector<vector<ColorTriple> >  Run();
+	vector<vector<ColorTriple> > Run();
 
 
 private:

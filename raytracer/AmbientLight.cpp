@@ -28,7 +28,7 @@ AmbientLight::AmbientLight() {
 }
 
 
-AmbientLight::AmbientLight(string Driver){
+AmbientLight::AmbientLight(string &Driver){
 		vector<string> line;
 		boost::split(line, Driver ,boost::is_any_of(" "));
 

@@ -25,7 +25,7 @@ LightSource::LightSource() {
 }
 
 
-LightSource::LightSource(string Driver){
+LightSource::LightSource(string &Driver){
 
 			vector<string> line;
 			boost::split(line, Driver ,boost::is_any_of(" "));

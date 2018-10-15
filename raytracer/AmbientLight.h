@@ -18,7 +18,7 @@ class AmbientLight {
 
 public:
 	AmbientLight();
-	AmbientLight(string Driver);
+	AmbientLight(string &Driver);
 	Eigen::Vector3f getVector();
 	virtual ~AmbientLight();
 
@@ -26,7 +26,6 @@ public:
 	float red ;
 	float green ;
 	float blue ;
-
 
 };
 

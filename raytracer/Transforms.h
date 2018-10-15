@@ -23,7 +23,6 @@ public:
 
 // Class varibles
 private:
-
 		Eigen::MatrixXf getRotate(const float vector[], const float theta);
 
 		Eigen::MatrixXf getScale(const float scale);

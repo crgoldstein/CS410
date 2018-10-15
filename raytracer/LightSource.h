@@ -18,7 +18,7 @@ using namespace std;
 class LightSource {
 public:
 	LightSource();
-	LightSource(string Driver);
+	LightSource(string &Driver);
 	Eigen::Vector3f getBrightnessVector() ;
 	Eigen::Vector3f  getXYZvector();
 	virtual ~LightSource();

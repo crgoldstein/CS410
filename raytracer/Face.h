@@ -21,13 +21,12 @@ using namespace std;
 class Face {
 public:
 	Face();
-	Face(point A, point B, point C,Materials M);
+	Face(const point &a ,const point &B, const point &C, const Materials &M); //??? Wont let me pass by &
 	void calulateNormal();
 	Eigen::Vector3f getNormal() ;
-	void setNormal(const Eigen::Vector3f  n);
+	void setNormal(const Eigen::Vector3f n);
 	virtual ~Face();
 	string toString();
-
 
 
 	point A;

@@ -18,8 +18,8 @@ Face::Face() {
 		//Material= Materials M;
 }
 
-Face::Face(point A, point B, point C, Materials M){
-	this->A=A;
+Face::Face(const point &a, const point &B, const point &C, const Materials &M){
+	A=a;
 	this->B=B;
 	this->C=C;
 	calulateNormal();

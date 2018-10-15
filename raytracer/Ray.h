@@ -22,7 +22,7 @@ using namespace std;
 class Ray {
 public:
 	Ray();
-	Ray( const point P, const float t, const point D);
+	Ray(const point P, const float t, const point D);
 	virtual ~Ray();
 	Eigen::Vector3f getRayVector();
 	string toString();

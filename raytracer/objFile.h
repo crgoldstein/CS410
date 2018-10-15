@@ -30,7 +30,7 @@ private:
 	string ReadOBJ(const string file);
 	Eigen::MatrixXf getVpoints();
 	void setVpoints(Eigen::MatrixXf& points) ;
-	void MakeFaces(string MaterialString);
+	void MakeFaces(string &MaterialString);
 	point MakePointFromV(int Index);
 
 	string DriverName;
