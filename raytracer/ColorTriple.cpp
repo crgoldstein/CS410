@@ -15,13 +15,13 @@ ColorTriple::ColorTriple() {
 
 }
 
-ColorTriple:: ColorTriple(float r, float g , float b){
+ColorTriple:: ColorTriple(const float r, const float g , const float b){
 	red = r * 255;
 	green =  g* 255;
 	blue =  b* 255;
 }
 
-int ColorTriple:: getRed(){
+int ColorTriple:: getRed() {
 		return red;
 }
 int ColorTriple:: getGreen(){
@@ -33,7 +33,7 @@ int ColorTriple:: getBlue(){
 
 string ColorTriple:: toString(){
 
-	return "R:"+ to_string(red)+ " G:"+ to_string(green) + " B:"+ to_string(blue);
+	return  to_string(red)+ " "+ to_string(green) + " "+ to_string(blue) +" ";
 }
 ColorTriple::~ColorTriple() {
 	// TODO Auto-generated destructor stub

@@ -19,7 +19,7 @@ class LightSource {
 public:
 	LightSource();
 	LightSource(string Driver);
-	Eigen::Vector3f getBrightnessVector();
+	Eigen::Vector3f getBrightnessVector() ;
 	Eigen::Vector3f  getXYZvector();
 	virtual ~LightSource();
 

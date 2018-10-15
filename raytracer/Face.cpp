@@ -18,7 +18,7 @@ Face::Face() {
 		//Material= Materials M;
 }
 
-Face::Face(point A, point B,point C, Materials M){
+Face::Face(point A, point B, point C, Materials M){
 	this->A=A;
 	this->B=B;
 	this->C=C;
@@ -36,11 +36,11 @@ void Face:: calulateNormal(){
 }
 
 
-Eigen::Vector3f Face:: getNormal(){
+Eigen::Vector3f Face:: getNormal() {
 	return normal;
 }
 
-void Face::setNormal( Eigen::Vector3f  n){
+void Face::setNormal(const Eigen::Vector3f  n){
 	normal=n;
 }
 

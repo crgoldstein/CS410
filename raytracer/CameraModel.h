@@ -31,16 +31,16 @@ public:
 	CameraModel();
 	CameraModel(vector<string> &Driver, vector<LightSource> &LightS,AmbientLight &ambient, vector<objFile> &Objs);
 	virtual ~CameraModel();
-	void test();
+	void testP2();
 	vector<vector<ColorTriple> >  Run();
 
-//private:
 
-	Eigen::Vector3f pixelPt(int i, int j);
+private:
+	Eigen::Vector3f pixelPt(const int i,const int j);
 	float* RayTriangleInterection(Eigen::Vector3f &L, Eigen::Vector3f &D, Eigen::Vector3f &A, Eigen::Vector3f &B ,Eigen::Vector3f &C);
 
-	ColorTriple  RAY_CAST( Eigen::Vector3f pixel, Eigen::Vector3f Direction);
-	ColorTriple  COLOR_PIXEL (Ray ray, Face face);
+	ColorTriple  RAY_CAST( Eigen::Vector3f pixel, Eigen::Vector3f Direction);//why can't i pass by referance
+	ColorTriple  COLOR_PIXEL (Ray &ray,  Face &face);
 
 // Class Variables
 	point EyeV;
@@ -62,7 +62,6 @@ public:
 	vector<LightSource> LightSourcesList;
 	AmbientLight Ambient;
 	vector<objFile> OBJs;
-	vector<vector<ColorTriple> > FileColor;
 };
 
 #endif /* CAMERAMODEL_H_ */

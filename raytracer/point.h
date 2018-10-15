@@ -20,7 +20,7 @@ class point {
 public:
 	point();
 
-	point(float X, float Y, float Z);
+	point(const float X, const float Y, const float Z);
 	virtual ~point();
 	Eigen::Vector3f getVector();
 	float getX();

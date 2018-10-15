@@ -12,7 +12,7 @@ point::point() {
 	this->z=0;
 
 }
-point::point( float X, float Y, float Z) {
+point::point( const float X, const float Y, const float Z) {
 	this->x=X;
 	this->y=Y;
 	this->z=Z;

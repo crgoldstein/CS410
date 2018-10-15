@@ -19,8 +19,8 @@ using namespace std;
 class PPMFile {
 public:
 	PPMFile();
-	PPMFile(string FileName);
-	void write(vector<vector<ColorTriple> > FileColor);
+	PPMFile(const string FileName);
+	void write(vector<vector<ColorTriple> > &FileColor);
 	virtual ~PPMFile();
 
 	string filename;

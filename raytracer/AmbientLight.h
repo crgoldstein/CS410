@@ -23,7 +23,7 @@ public:
 	virtual ~AmbientLight();
 
 //private:
-	float red;
+	float red ;
 	float green ;
 	float blue ;
 

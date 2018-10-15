@@ -14,8 +14,6 @@
 #include <boost/algorithm/string/classification.hpp> // Include boost::for is_any_of
 #include <boost/algorithm/string/split.hpp> // Include for boost::split
 
-
-
 using namespace std;
 
 CameraModel::CameraModel() {}
@@ -89,7 +87,142 @@ CameraModel::CameraModel(vector<string> &Driver, vector<LightSource> &LightS,  A
 
 }
 
-void CameraModel:: test(){
+Eigen::Vector3f CameraModel:: pixelPt(const int i, const int j){
+    float px = (float)i/(width-1)*(right-left)+left;
+
+    float py = (float)j/(height-1)*(bottom-top)+top;
+
+    Eigen::Vector3f pixpt =  EyeV.getVector()
+							+ (near * Wv.getVector())
+							+ (px * Uv.getVector())
+							+ (py * Vv.getVector());
+    return pixpt;
+
+}
+
+float* CameraModel:: RayTriangleInterection(Eigen::Vector3f &L, Eigen::Vector3f &D, Eigen::Vector3f &A, Eigen::Vector3f &B ,Eigen::Vector3f &C){
+	//Cramer's Rule.
+	//This approach involves solving for the determinants of four matrices,
+	//the original M matrix and then three derived by substituting Y into successive columns.
+			D=D.normalized().eval();
+
+			Eigen::Vector3f AminusL = A-L;
+			Eigen::Matrix3f M;   M << (A-B)   ,(A-C),   D;
+			Eigen::Matrix3f M1; M1 << AminusL ,(A-C),   D;
+			Eigen::Matrix3f M2; M2 << (A-B)   ,AminusL, D;
+			Eigen::Matrix3f M3; M3 << (A-B)   ,(A-C),   AminusL;
+
+			M =M.transpose().eval();
+			M1=M1.transpose().eval();
+			M2=M2.transpose().eval();
+			M3=M3.transpose().eval();
+
+			float beta = M1.determinant()/ M.determinant();
+			float gamma = M2.determinant()/ M.determinant();
+			float t = M3.determinant()/ M.determinant();
+			float* returnArray = new float[3];
+			returnArray[0]=	beta;returnArray[1]= gamma; returnArray[2]=t;
+
+			return returnArray;
+}
+
+ColorTriple CameraModel:: RAY_CAST(Eigen::Vector3f pixel, Eigen::Vector3f Direction){
+	float* BGT = new float[3];
+	float minT = numeric_limits<float>::max();
+	Face closestFace;
+	bool HitsSomething = false;
+
+				for( objFile object : OBJs){
+					   	for(Face face : object.Faces ){
+
+					   			Eigen::Vector3f A = face.A.getVector();
+					   			Eigen::Vector3f B = face.B.getVector();
+					   			Eigen::Vector3f C = face.C.getVector();
+
+					   			BGT = RayTriangleInterection(pixel,Direction,A,B,C);
+					   			float beta = BGT[0]; float gamma = BGT[1]; float t = BGT[2];
+					   			if (beta >=0 && gamma >=0 && beta + gamma <=1 && t>0){// checking if the ray actually hits the face
+					   				HitsSomething=true;
+					   				if (t < minT){ // checking if its the first visible surface aka the Smallest T value
+					   					minT = t;
+					   					closestFace = face;
+					   				}
+					   			}
+					   	}// end ForEach for Faces
+					}//end ForEach for Objects
+
+		if (HitsSomething){
+			cout<<"RAY_CAST :HitsSomething TRUE!!"<<endl;
+			point p;
+			Ray ray(p.Vector2Point(pixel), minT, p.Vector2Point(Direction));
+
+			return COLOR_PIXEL(ray, closestFace);
+		}
+		else {
+
+			return ColorTriple();/// return background color
+		}
+}
+
+ColorTriple CameraModel:: COLOR_PIXEL(Ray &ray,  Face &face ){
+
+	if (ray.Direction.getVector().normalized().dot(face.normal) < 0){// normal is pointing to the inside of the object
+		face.setNormal(-face.normal);// Flip the normal;
+	}
+	//I= kaBa + SUM( KdBd(N dot L) + specular Light)
+	Eigen::Vector3f Illumination(0,0,0) ;
+	Eigen::MatrixXf Ka = Eigen::MatrixXf::Identity(3, 3); Ka(0,0)=face.Material.KaRed; Ka(1,1)=face.Material.KaGreen; Ka(2,2)=face.Material.KaBlue;
+	Eigen::MatrixXf Kd = Eigen::MatrixXf::Identity(3, 3); Kd(0,0)=face.Material.KdRed; Kd(1,1)=face.Material.KdGreen; Kd(2,2)=face.Material.KdBlue;
+
+				// Ka * Brightness of AmbientLight
+	Illumination = Ka * Ambient.getVector();
+
+
+	//for every light socurces :
+	for( LightSource L : LightSourcesList ){
+		   Eigen::Vector3f lightS =  L.getXYZvector(); lightS = lightS.normalized();
+		   Eigen::Vector3f norm = face.getNormal();
+		   if( lightS.dot(norm) >= 0 )// the light is on the back side of the object
+			   	   	   //Diffusse Illumination : kd * brighness of light scorce  *(L dot normal)(this is a scalar)
+		    	Illumination +=  Kd * L.getBrightnessVector() * lightS.dot(norm) ;
+		}
+
+    // write the resulting RGB into the pixel
+	return ColorTriple(Illumination(0),Illumination(1),Illumination(2));
+
+}
+
+vector<vector<ColorTriple> > CameraModel:: Run(){
+
+	vector<vector<ColorTriple> > FileColor;
+
+	for(int x =0; x < height ; x++){
+		vector<ColorTriple> temp;
+		for(int y=0; y <width; y++){
+		// for each pixel in the image to be rendered
+			       //fire a ray into the scene and determine the first( the smallest  t value) visible surface
+
+				// make this a RAY object:
+					Eigen::Vector3f pixel = pixelPt(x,y);
+				    Eigen::Vector3f Direction = (pixel - EyeV.getVector()); //(pixel point)- eye
+
+				    // for each pixel hit into each face
+				    ColorTriple rgb = RAY_CAST(pixel,Direction);
+				    temp.push_back(rgb);
+
+		}//end of ForLoop y
+		FileColor.push_back(temp);
+	}//end of ForLoop x
+
+	return FileColor;
+
+}
+
+CameraModel::~CameraModel() {
+	// TODO Auto-generated destructor stub
+}
+
+void CameraModel:: testP2(){
 					cout<<"Testing variables from the Camera Model "<<endl;
 
 					cout<<"EyeV "<< EyeV.toString() <<endl;
@@ -175,155 +308,3 @@ void CameraModel:: test(){
 					*/
 
 }
-
-Eigen::Vector3f CameraModel:: pixelPt(int i, int j){
-    float px = (float)i/(width-1)*(right-left)+left;
-
-    float py = (float)j/(height-1)*(bottom-top)+top;
-
-    Eigen::Vector3f pixpt =  EyeV.getVector()
-							+ (near * Wv.getVector())
-							+ (px * Uv.getVector())
-							+ (py * Vv.getVector());
-    return pixpt;
-
-}
-
-float* CameraModel:: RayTriangleInterection(Eigen::Vector3f &L, Eigen::Vector3f &D, Eigen::Vector3f &A, Eigen::Vector3f &B ,Eigen::Vector3f &C){
-	//Cramer's Rule.
-	//This approach involves solving for the determinants of four matrices,
-	//the original M matrix and then three derived by substituting Y into successive columns.
-			D=D.normalized().eval();
-
-			Eigen::Vector3f AminusL = A-L;
-			Eigen::Matrix3f M;   M << (A-B)   ,(A-C),   D;
-			Eigen::Matrix3f M1; M1 << AminusL ,(A-C),   D;
-			Eigen::Matrix3f M2; M2 << (A-B)   ,AminusL, D;
-			Eigen::Matrix3f M3; M3 << (A-B)   ,(A-C),   AminusL;
-
-			M =M.transpose().eval();
-			M1=M1.transpose().eval();
-			M2=M2.transpose().eval();
-			M3=M3.transpose().eval();
-
-			float beta = M1.determinant()/ M.determinant();
-			float gamma = M2.determinant()/ M.determinant();
-			float t = M3.determinant()/ M.determinant();
-			float* returnArray = new float[3];
-			returnArray[0]=	beta;returnArray[1]= gamma; returnArray[2]=t;
-
-			return returnArray;
-}
-
-ColorTriple CameraModel:: RAY_CAST(Eigen::Vector3f pixel, Eigen::Vector3f Direction){
-
-	float* BGT = new float[3];
-	float minT = numeric_limits<float>::max();
-	Face closestFace;
-	bool HitsSomething = false;
-
-				for( objFile object : OBJs){
-					   	for(Face face : object.Faces ){
-
-					   			Eigen::Vector3f A = face.A.getVector();
-					   			Eigen::Vector3f B = face.B.getVector();
-					   			Eigen::Vector3f C = face.C.getVector();
-
-					   			BGT = RayTriangleInterection(pixel,Direction,A,B,C);
-					   			float beta = BGT[0]; float gamma = BGT[1]; float t = BGT[2];
-					   			if (beta >=0 && gamma >=0 && beta + gamma <=1 && t>0){// checking if the ray actually hits the face
-					   				HitsSomething=true;
-					   				if (t < minT){ // checking if its the first visible surface aka the Smallest T value
-					   					minT = t;
-					   					closestFace = face;
-					   				}
-					   			}
-					   	}// end ForEach for Faces
-					}//end ForEach for Objects
-
-		if (HitsSomething){
-			cout<<"RAY_CAST :HitsSomething TRUE!!"<<endl;
-			//cout<<"RAY_CAST: Pixel\n"<< pixel<<endl;
-			//cout<<"RAY_CAST: Direction\n"<< Direction<<endl;
-			//cout<<"RAY_CAST: MinT\n"<< minT<<endl;
-			//cout<<"RAY_CAST: ClosestFace\n"<< closestFace.toString()<<endl;
-
-			point p;
-			Ray ray(p.Vector2Point(pixel), minT, p.Vector2Point(Direction));
-
-			Eigen::Vector3f PointonFace; PointonFace = (pixel) + minT*(Direction);
-			return COLOR_PIXEL(ray, closestFace);
-		}
-		else {
-
-			return ColorTriple();/// return background color
-		}
-}
-
-
-ColorTriple CameraModel:: COLOR_PIXEL(Ray ray, Face face ){
-
-	if (ray.Direction.getVector().normalized().dot(face.normal) < 0){// normal is pointing to the inside of the object
-		face.setNormal(-face.normal);// Flip the normal;
-	}
-	//I= kaBa + SUM( KdBd(N dot L) + specular Light)
-	Eigen::Vector3f Illumination(0,0,0) ;
-
-	Eigen::MatrixXf Ka = Eigen::MatrixXf::Identity(3, 3); Ka(0,0)=face.Material.KaRed; Ka(1,1)=face.Material.KaGreen; Ka(2,2)=face.Material.KaBlue;
-	Eigen::MatrixXf Kd = Eigen::MatrixXf::Identity(3, 3); Kd(0,0)=face.Material.KdRed; Kd(1,1)=face.Material.KdGreen; Kd(2,2)=face.Material.KdBlue;
-
-				// Ka * Brightness of AmbientLight
-	Illumination = Ka * Ambient.getVector(); cout<<"Illumination Ambieint Light "<<Illumination(0) << " "<<Illumination(1) << " "<<Illumination(2) << endl;
-
-    //for every light socurces :
-	for( LightSource L : LightSourcesList ){
-		//Compute red, green and blue based on illumination
-			//Diffusse Illumination : kd * brighness of light scorce  *(L dot normal)(this is a scalar)
-
-		   Eigen::Vector3f lightS =  L.getXYZvector();
-		   lightS = lightS.normalized();
-		     //toL = ptL - ptos; toL = toL / toL.norm()
-		   Eigen::Vector3f norm= face.getNormal();
-
-		   if( lightS.dot(norm) >= 0 )// the light is on the back side of the object
-		    	Illumination +=  Kd * L.getBrightnessVector() * lightS.dot(norm) ;
-
-	}
-
-    // write the resulting RGB into the pixel
-	return ColorTriple(Illumination(0),Illumination(1),Illumination(2));
-
-}
-
-
-
-vector<vector<ColorTriple> > CameraModel:: Run(){
-	for(int x =0; x < height ; x++){
-		vector<ColorTriple> temp;
-		for(int y=0; y <width; y++){
-		// for each pixel in the image to be rendered
-			       //fire a ray into the scene and determine the first( the smallest  t value) visible surface
-
-				// make this a RAY object:
-					Eigen::Vector3f pixel = pixelPt(x,y);
-				    Eigen::Vector3f Direction = (pixel - EyeV.getVector()); //(pixel point)- eye
-
-				    // for each pixel hit into each face
-				    ColorTriple rgb = RAY_CAST(pixel,Direction);
-				    temp.push_back(rgb);
-
-		}//end of ForLoop y
-		FileColor.push_back(temp);
-	}//end of ForLoop x
-
-	return FileColor;
-
-}
-
-
-
-
-CameraModel::~CameraModel() {
-	// TODO Auto-generated destructor stub
-}
-

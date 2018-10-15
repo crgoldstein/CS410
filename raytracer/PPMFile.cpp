@@ -12,10 +12,11 @@ PPMFile::PPMFile() {
 
 }
 
-PPMFile::PPMFile(string FileName){
+PPMFile::PPMFile(const string FileName){
 	filename =FileName;
 }
-void PPMFile::write(vector<vector<ColorTriple> > FileColor){
+void PPMFile::write(vector<vector<ColorTriple> >  &FileColor){
+
 cout<<"Write to a File"<<endl;
 	  ofstream file(filename);
 	  if (file.is_open())
@@ -23,9 +24,9 @@ cout<<"Write to a File"<<endl;
 		  file << "P3\n"
 			   << FileColor[0].size() << " "<< FileColor.size() << " 255\n";
 
-	    for(int x =0; x<FileColor.size(); x++){
-	    	for(int y=0; y<FileColor[0].size(); y++){
-	    			file<<FileColor[x][y].getRed()<<" "<< FileColor[x][y].getGreen()<<" "<< FileColor[x][y].getBlue() <<" ";
+	    for(int y =0; y<FileColor.size(); y++){
+	    	for(int x=0; x<FileColor[0].size(); x++){
+	    			file<<FileColor[x][y].toString();
 	    		}
 	    			file<<"\n";
 	    	}

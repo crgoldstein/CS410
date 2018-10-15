@@ -17,7 +17,7 @@
 using namespace std;
 
 
-Transforms::Transforms(float rotateP[], float theta,  float scale, float translate[] ){
+Transforms::Transforms( float rotateP[],  float theta,   float scale,  float translate[] ){
 	RotateV=rotateP;
 	ThetaV =theta;
 	ScaleV = scale;

@@ -90,7 +90,8 @@ int main(int argc, char* argv[])
 
 		 //CAMERA.test();
 
-		 ppmFile.write(CAMERA.Run());
+		vector<vector<ColorTriple> >  FileColor= CAMERA.Run();
+		 ppmFile.write(FileColor);
 		 return 0;
 	}
 

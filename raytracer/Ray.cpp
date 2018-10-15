@@ -13,7 +13,7 @@ Ray::Ray(){
 		Direction = point();
 }
 
-Ray::Ray(point P, float t, point D) {
+Ray::Ray(const point P, const float t, const point D) {
 	Pixel = P;
 	T = t;
 	Direction = P;

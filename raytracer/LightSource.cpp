@@ -41,7 +41,7 @@ LightSource::LightSource(string Driver){
 
 }
 
-Eigen::Vector3f LightSource:: getBrightnessVector(){
+Eigen::Vector3f LightSource:: getBrightnessVector() {
 
 	Eigen::Vector3f B;
 	B<< red,green,blue;

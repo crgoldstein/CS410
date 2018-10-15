@@ -34,7 +34,7 @@ objFile::objFile(const string Driver) {
 		Eigen::MatrixXf  RST = T.getRST();
 		Eigen::MatrixXf  Vpts = getVpoints();
 	 	Eigen::MatrixXf  RSTPoints = RST*Vpts.transpose();
-	 	setVpoints(&RSTPoints);
+	 	setVpoints(RSTPoints);
 	 	//Make Face Objects that have points ABC and Materials
 	 	MakeFaces(Material);
 
@@ -97,13 +97,12 @@ Eigen::MatrixXf objFile:: getVpoints(){
 }
 
 
-void objFile::setVpoints(Eigen::MatrixXf* points){
-	Eigen::MatrixXf newV = *points;
-
+void objFile::setVpoints(Eigen::MatrixXf &points) {
+	//Eigen::MatrixXf newV = *points;
 	for(int i =0; i<v.size(); i++){
-		string x = to_string(newV(0,i));
-		string y = to_string(newV(1,i));
-		string z = to_string(newV(2,i));
+		string x = to_string(points(0,i));
+		string y = to_string(points(1,i));
+		string z = to_string(points(2,i));
 	    v[i] ="v "+ x +  " " +y + " " +z;
 	}
 }

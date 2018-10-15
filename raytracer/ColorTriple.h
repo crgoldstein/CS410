@@ -16,10 +16,10 @@ using namespace std;
 class ColorTriple {
 public:
 	ColorTriple();
-	ColorTriple(float r, float g , float b);
-	int getRed();
-	int getGreen();
-	int getBlue();
+	ColorTriple(const float r,  const float g , const float b);
+	int getRed() ;
+	int getGreen() ;
+	int getBlue() ;
 	virtual ~ColorTriple();
 	string toString();
 
