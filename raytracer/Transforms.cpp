@@ -36,7 +36,7 @@ Transforms::~Transforms() {
 	// TODO Auto-generated destructor stub
 }
 
-Eigen::MatrixXf Transforms::getRotate( const float vector[], const float theta){
+Eigen::MatrixXf Transforms::getRotate(const float vector[], const float theta){
 	//Axis Angle Rotation
 		Eigen::Vector3f Wv(vector[0],vector[1],vector[2]);
 		Eigen::Vector3f Mv(0,0,0);
@@ -61,6 +61,7 @@ Eigen::MatrixXf Transforms::getRotate( const float vector[], const float theta){
 					  index =i ;
 				   }
 				}
+
 			Mv[index]=1;
 
 		//Second, now that the top and bottom row of our rotation matrix is defined,
@@ -69,7 +70,6 @@ Eigen::MatrixXf Transforms::getRotate( const float vector[], const float theta){
 		    Uv=Wv.cross(Mv);//
 			Uv=Uv.normalized();
 			Vv= Wv.cross(Uv);// why dont you normaize Vv becouse Wv and Uv orthgonal and there for they produce unit leng things
-
 
 			Eigen::MatrixXf m=Eigen::MatrixXf::Identity(4, 4);
 				m(0,0) = Uv(0,0);m(0,1) = Uv(1,0);m(0,2) = Uv(2,0);

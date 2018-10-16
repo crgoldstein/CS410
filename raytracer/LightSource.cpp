@@ -43,17 +43,13 @@ LightSource::LightSource(string &Driver){
 
 Eigen::Vector3f LightSource:: getBrightnessVector() {
 
-	Eigen::Vector3f B;
-	B<< red,green,blue;
+	Eigen::Vector3f B(red,green,blue);
 	return B;
 }
 Eigen::Vector3f LightSource:: getXYZvector(){
 
-	Eigen::Vector3f xyz;
-	xyz << x,y,z;
+	Eigen::Vector3f xyz(x,y,z);
 	return xyz;
-
-
 }
 
 

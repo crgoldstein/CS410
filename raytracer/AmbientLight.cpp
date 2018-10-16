@@ -39,8 +39,7 @@ AmbientLight::AmbientLight(string &Driver){
 
 
 Eigen::Vector3f AmbientLight:: getVector(){
-	Eigen::Vector3f vec;
-	 vec << red, green, blue;
+	Eigen::Vector3f vec(red, green, blue);
 	 return vec;
 
 }

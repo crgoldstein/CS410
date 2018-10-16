@@ -15,7 +15,7 @@ PPMFile::PPMFile() {
 PPMFile::PPMFile(const string FileName){
 	filename =FileName;
 }
-void PPMFile::write(vector<vector<ColorTriple> >  &FileColor){
+void PPMFile::write( vector<vector<ColorTriple> >  &FileColor){
 
 cout<<"Write to a File"<<endl;
 	  ofstream file(filename);

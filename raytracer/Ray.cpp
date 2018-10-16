@@ -8,12 +8,12 @@
 #include "Ray.h"
 
 Ray::Ray(){
-		Pixel = point();
+		Pixel << 0,0,0;
 		T = 0;
-		Direction = point();
+		Direction  << 0,0,0;
 }
 
-Ray::Ray(const point P, const float t, const point D) {
+Ray::Ray(const Eigen::Vector3f &P, const float t, const Eigen::Vector3f &D) {
 	Pixel = P;
 	T = t;
 	Direction = P;
@@ -21,8 +21,7 @@ Ray::Ray(const point P, const float t, const point D) {
 }
 
 Eigen::Vector3f Ray:: getRayVector(){
-	Eigen::Vector3f  ray;
-	ray = Pixel.getVector() + (T*Direction.getVector());
+	Eigen::Vector3f ray(Pixel+ (T*Direction));
 	return ray;
 }
 

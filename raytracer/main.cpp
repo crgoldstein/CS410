@@ -88,10 +88,10 @@ int main(int argc, char* argv[])
 		 // Set Up Camera model
 		 CameraModel CAMERA(cameraElements,Lighting,backgorund,OBJs);
 
-		 //CAMERA.test();
-
+		cout<<"Run "<<endl;
+		//CAMERA.testP2();
 		vector<vector<ColorTriple> >  FileColor= CAMERA.Run();
-		 ppmFile.write(FileColor);
+		ppmFile.write(FileColor);
 		 return 0;
 	}
 

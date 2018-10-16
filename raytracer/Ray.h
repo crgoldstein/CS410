@@ -22,14 +22,14 @@ using namespace std;
 class Ray {
 public:
 	Ray();
-	Ray(const point P, const float t, const point D);
+	Ray(const Eigen::Vector3f &P, const float t, const Eigen::Vector3f &D);
 	virtual ~Ray();
 	Eigen::Vector3f getRayVector();
 	string toString();
 
-	point Pixel;
+	Eigen::Vector3f Pixel;
 	float T;
-	point Direction;
+	Eigen::Vector3f Direction;
 };
 
 #endif /* RAY_H_ */

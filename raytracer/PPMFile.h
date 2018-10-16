@@ -20,7 +20,7 @@ class PPMFile {
 public:
 	PPMFile();
 	PPMFile(const string FileName);
-	void write(vector<vector<ColorTriple> > &FileColor);
+	void write( vector<vector<ColorTriple> > &FileColor);
 	virtual ~PPMFile();
 
 	string filename;

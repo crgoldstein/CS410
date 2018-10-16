@@ -37,10 +37,10 @@ public:
 
 private:
 	Eigen::Vector3f pixelPt(const int i,const int j);
-	float* RayTriangleInterection(Eigen::Vector3f &L, Eigen::Vector3f &D, Eigen::Vector3f &A, Eigen::Vector3f &B ,Eigen::Vector3f &C);
+	float RayTriangleInterection(Eigen::Vector3f &L, Eigen::Vector3f &D, Face &f);//Eigen::Vector3f &A, Eigen::Vector3f &B ,Eigen::Vector3f &C);
 
-	ColorTriple  RAY_CAST( Eigen::Vector3f pixel, Eigen::Vector3f Direction);//why can't i pass by referance
-	ColorTriple  COLOR_PIXEL (Ray &ray,  Face &face);
+	ColorTriple  RAY_CAST(const int i,const int j);//why can't i pass by referance
+	ColorTriple  COLOR_PIXEL (Ray &ray, Face &face);
 
 // Class Variables
 	point EyeV;

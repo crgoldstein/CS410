@@ -37,8 +37,7 @@ point point:: Vector2Point(const Eigen::Vector3f &v){
 
 
 Eigen::Vector3f point::getVector(){
-	Eigen::Vector3f point;
-	point << x,y,z;
+	Eigen::Vector3f point(x,y,z);
 	return point;
 }
 

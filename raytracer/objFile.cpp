@@ -31,9 +31,9 @@ objFile::objFile(const string Driver) {
 		//Reading OBJ file
 		string Material = ReadOBJ(results[9]);
 		//Rotating and Updating the V poitns
-		Eigen::MatrixXf  RST = T.getRST();
-		Eigen::MatrixXf  Vpts = getVpoints();
-	 	Eigen::MatrixXf  RSTPoints = RST*Vpts.transpose();
+		Eigen::MatrixXf  RST (T.getRST());
+		Eigen::MatrixXf  Vpts(getVpoints());
+	 	Eigen::MatrixXf  RSTPoints(RST*Vpts.transpose());
 	 	setVpoints(RSTPoints);
 	 	//Make Face Objects that have points ABC and Materials
 	 	MakeFaces(Material);
@@ -41,7 +41,7 @@ objFile::objFile(const string Driver) {
 }
 
 string objFile:: ReadOBJ(const string fileName){
-	string location = "drivers_models/" +fileName;
+	string location = fileName;
 	ifstream file(location);// getting the file to match
 
 		if (! file.is_open())

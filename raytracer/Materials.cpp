@@ -29,7 +29,7 @@ Materials::Materials() {
 
 
 Materials::Materials(string fileName){
-	string location = "drivers_models/"+fileName;
+	string location = fileName;
 	ifstream file(location);// getting the file to match
 
 	vector<string> File;
@@ -77,28 +77,25 @@ Materials::Materials(string fileName){
 
 Eigen::Vector3f Materials::getKaVector(){
 
-	Eigen::Vector3f vectorKA;
-	vectorKA << KaRed, KaGreen, KaBlue ;
+	Eigen::Vector3f vectorKA(KaRed, KaGreen, KaBlue );
 	return vectorKA;
 
 }
 Eigen::Vector3f Materials:: getKdVector(){
 
-		Eigen::Vector3f vectorKd;
-		vectorKd<< KdRed, KdGreen, KdBlue ;
+		Eigen::Vector3f vectorKd(KdRed, KdGreen, KdBlue );
 		return vectorKd;
 
 }
 Eigen::Vector3f Materials:: getKsVector(){
 
-			Eigen::Vector3f vectorKs;
-			vectorKs<< KsRed, KsGreen, KsBlue ;
+			Eigen::Vector3f vectorKs(KsRed, KsGreen, KsBlue) ;
 			return vectorKs;
 }
 
 string Materials::toString(){
 
-	return "\n		Ka: "+ to_string(KaRed) + " "+ to_string(KaGreen) + " "+ to_string(KaBlue)
+	return    "\n		Ka: "+ to_string(KaRed) + " "+ to_string(KaGreen) + " "+ to_string(KaBlue)
 			+ "\n		Kd: "+ to_string(KdRed) + " "+ to_string(KdGreen) + " "+ to_string(KdBlue)
 			+ "\n		Ks: "+ to_string(KsRed) + " "+ to_string(KsGreen) + " "+ to_string(KsBlue) ;
 }
