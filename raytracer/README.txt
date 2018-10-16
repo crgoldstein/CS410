@@ -1,39 +1,47 @@
-README
-======
+README.txt
+------------
 
-Assignment 1:
-	Polygonal models exist for lots and lots of objects. To make a coherent scene, however, you need to be able to read and write models to disk, along with applying manipulations to them. For example, translating, rotating, and scaling them. In this assignment you will take existing polygonal models (in .OBJ format) and apply some 3D transformations to them. In particular, you will be using Axis-Angle Rotation specifications to rotate the model about a given axis, followed by scaling it uniformly along three axes, followed by a translation along three axes. A 'driver' (scene file) - read as an argument by your program - will contain pairs of 3D transformations and object model names to be transformed.
+CS410 Assignment 2:
+---------------------
+
+	This is the starting point for a full ray-tracing program. This project reads 3D camera specifications and one or more 3D objects defined in a driver file along with light source specifications and material properties of the objects. Thus rendering a colorful scene. This project only has the illumination model that includes ambient and diffuse components.
 
 
-This package includes the following files.
-
-|-- Transforms.h
-|-- Transforms.cpp
-|-- objFile.h
-|-- objFile.cpp
-|-- main.cpp
-|-- eigen-eigen-b9cd8366d4e8
-|-- Makefile
-|-- README.txt
-
-Transforms.h & Transforms.cpp: 
-	construction of Rotation, Scale , Translate matrix 
-
-objFile.h & objFile.cpp :
-	Getters and Setting for the .obj file
-	also writes a new file 
-
-eigen-eigen-b9cd8366d4e8 :
-	Directory that holds the linear algebra library. 
-
+How To Run:
+------------
 
 To compile:
-   make clean
-   make
+   	make
+
+To clean:
+	make clean
 
 To run:
-    ./modletoworld <driver file>
+    	./raytracer <Driver File>.txt  <New File Name>.ppm
 
-For example;
-    ./modletoworld driver00.txt
+For example:
+    	./raytracer driver00.txt driver00.ppm
+
+
+
+File list:
+------------
+
+|-- Transforms.h & Transforms.cpp		Construction of Rotation, Scale, Translate matrix 
+|-- objFile.h & objFile.cpp 			Getters and Setting for the .obj file, Makes a list of Face Objects that correspond to the Faces of the Obj File 
+|-- CameraModel.h & CameraModel.cpp		Sets up camera Model and has all main functions for Raytracing including Run(), Ray Cast ,and Color Pixel
+|-- AmbientLight.h & AmbientLight.cpp		Holds information about Ambient Light red green and blue	
+|-- LightSource.h & LightSource.cpp		Holds information about Light position and red green and blue values 
+|-- point.h & point.cpp				Holds the  X Y Z numbers for a point in space and contains the ability to become a vector
+|-- Face.h & Face.cpp				Holds 3 points A B and C that make up one face of the Object. Also calculates the normal of that face
+|-- Materials.h & Materials.cpp 		Reads the MTL file and holds the Ka , Kd, and Ks lighting coefficients  
+|-- Ray.h & Ray.cpp				Holds a Point and a Direction
+|-- ColorTriple.h & ColorTriple.cpp		Converts the 0-1 range to 0 - 255 Range for the RBG image
+|-- PPMFile.h & PPMFile.cpp			Writes out the 2D Vector of ColorTriple’s to the PPM format
+|-- main.cpp					Reads in Argument line and
+|-- eigen-eigen-b9cd8366d4e8			Directory that holds the linear algebra library. 
+|-- Makefile					MakeFile
+|-- README.txt					This File
+
+
 
