@@ -21,6 +21,7 @@ public:
 	LightSource(string &Driver);
 	Eigen::Vector3f getBrightnessVector() ;
 	Eigen::Vector3f  getXYZvector();
+	string toString();
 	virtual ~LightSource();
 
 

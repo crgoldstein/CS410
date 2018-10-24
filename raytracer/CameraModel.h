@@ -15,6 +15,7 @@
 #include "objFile.h"
 #include "point.h"
 #include "Ray.h"
+#include "Sphere.h"
 #include "ColorTriple.h"
 
 #include <vector>
@@ -29,19 +30,20 @@ class CameraModel {
 
 public:
 	CameraModel();
-	CameraModel(vector<string> &Driver, vector<LightSource> &LightS,AmbientLight &ambient, vector<objFile> &Objs);
+	CameraModel(vector<string> &Driver, vector<LightSource> &LightS,
+				AmbientLight &ambient, vector<objFile> &Objs ,vector<Sphere> &Sphs);
 	virtual ~CameraModel();
 	void testP2();
+	void testP3();
 	vector<vector<ColorTriple> > Run();
 
 
 private:
 	Eigen::Vector3f pixelPt(const int i,const int j);
-	float RayTriangleInterection(Eigen::Vector3f &L, Eigen::Vector3f &D, Face &f);//Eigen::Vector3f &A, Eigen::Vector3f &B ,Eigen::Vector3f &C);
 
-	ColorTriple  RAY_CAST(const int i,const int j);//why can't i pass by referance
-	ColorTriple  COLOR_PIXEL (Ray &ray, Face &face);
-
+	ColorTriple  RAY_CAST(Ray &ray);//why can't i pass by referance
+	ColorTriple  COLOR_PIXEL (Ray &ray, Eigen::Vector3f &Normal, Materials &Mat, Eigen::Vector3f &pnt );
+	bool HitsSomething(Ray &ray);
 // Class Variables
 	point EyeV;
 	point LookV;
@@ -62,6 +64,7 @@ private:
 	vector<LightSource> LightSourcesList;
 	AmbientLight Ambient;
 	vector<objFile> OBJs;
+	vector<Sphere> SPHs;
 };
 
 #endif /* CAMERAMODEL_H_ */

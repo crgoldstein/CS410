@@ -17,7 +17,7 @@ objFile::objFile(const string Driver) {
 
 		vector<string> results;
 		boost::split(results, Driver,boost::is_any_of(" "));
-		// 0	1	2	3 	4  5  6  7    8      9
+		//  0	1	2	3 	4  5  6  7    8      9
 		//model 1.0 1.0 0.0 30 2 0.0 0.0 -15.0 cube_centered.obj
 
 		float rotate[3] = {strtof((results[1]).c_str(),0), strtof((results[2]).c_str(),0) ,strtof((results[3]).c_str(),0)};
@@ -78,7 +78,6 @@ string objFile:: ReadOBJ(const string fileName){
 
 }
 
-
 Eigen::MatrixXf objFile:: getVpoints(){
 
 	Eigen::MatrixXf m (v.size(),4);
@@ -96,7 +95,6 @@ Eigen::MatrixXf objFile:: getVpoints(){
 	return m;
 }
 
-
 void objFile::setVpoints(Eigen::MatrixXf &points) {
 	//Eigen::MatrixXf newV = *points;
 	for(int i =0; i<v.size(); i++){
@@ -106,7 +104,6 @@ void objFile::setVpoints(Eigen::MatrixXf &points) {
 	    v[i] ="v "+ x +  " " +y + " " +z;
 	}
 }
-
 
 void objFile:: MakeFaces(string &MaterialString){
 	Materials M(MaterialString);
@@ -135,7 +132,6 @@ void objFile:: MakeFaces(string &MaterialString){
 		Bpoint = MakePointFromV(B);
 		Cpoint = MakePointFromV(C);
 		Face F(Apoint, Bpoint, Cpoint, M);
-
 
 
 		Faces.push_back(F);

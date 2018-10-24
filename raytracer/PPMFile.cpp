@@ -19,6 +19,7 @@ void PPMFile::write( vector<vector<ColorTriple> >  &FileColor){
 
 cout<<"Write to a File"<<endl;
 	  ofstream file(filename);
+
 	  if (file.is_open())
 	  {
 		  file << "P3\n"

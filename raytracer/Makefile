@@ -1,9 +1,12 @@
 CC = g++ 
 CFLAGS = -Wall -c -O3 -I ./eigen-eigen-b9cd8366d4e8
 LFLAGS = -Wall 
-OBJS = main.o Transforms.o objFile.o CameraModel.o AmbientLight.o LightSource.o point.o Face.o Materials.o Ray.o ColorTriple.o PPMFile.o
-HFILES = Transforms.h objFile.h CameraModel.h  AmbientLight.h LightSource.h point.h Face.h Materials.h Ray.h ColorTriple.h PPMFile.h
-CfILES = Transforms.cpp objFile.cpp CameraModel.cpp  AmbientLight.cpp LightSource.cpp point.cpp Face.cpp Materials.cpp Ray.cpp ColorTriple.cpp PPMFile.cpp
+
+OBJS = main.o Transforms.o objFile.o CameraModel.o AmbientLight.o LightSource.o point.o Face.o Materials.o Ray.o ColorTriple.o PPMFile.o Sphere.o
+
+HFILES = Transforms.h objFile.h CameraModel.h  AmbientLight.h LightSource.h point.h Face.h Materials.h Ray.h ColorTriple.h PPMFile.h Sphere.h
+
+CfILES = Transforms.cpp objFile.cpp CameraModel.cpp  AmbientLight.cpp LightSource.cpp point.cpp Face.cpp Materials.cpp Ray.cpp ColorTriple.cpp PPMFile.cpp Sphere.cpp
 
 
 
@@ -49,6 +52,8 @@ ColorTriple.o: ColorTriple.cpp  ColorTriple.h
 PPMFile.o: PPMFile.cpp  PPMFile.h  
 	$(CC) PPMFile.cpp $(CFLAGS) 
 
+Sphere.o: Sphere.cpp  Sphere.h  
+	$(CC) Sphere.cpp $(CFLAGS) 
 
 clean: 
 	-rm *.o raytracer

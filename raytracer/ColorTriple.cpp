@@ -7,6 +7,7 @@
 
 #include "ColorTriple.h"
 
+
 ColorTriple::ColorTriple() {
 	    //This is the background color
 		red = 0;
@@ -16,10 +17,26 @@ ColorTriple::ColorTriple() {
 }
 
 ColorTriple:: ColorTriple(const float r, const float g , const float b){
-	red = r * 255;
-	green =  g* 255;
-	blue =  b* 255;
+	red = CapColor(r) * 255;
+	green =  CapColor(g)* 255;
+	blue =  CapColor(b)* 255;
 }
+
+
+float ColorTriple::CapColor(float color){
+
+	if(color < 0){
+		return 0;
+	}
+	else if (color >1 ){
+		return 1;
+	}
+	else{
+		return color;
+	}
+
+}
+
 
 int ColorTriple:: getRed() {
 		return red;

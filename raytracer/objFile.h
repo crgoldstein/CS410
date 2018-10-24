@@ -18,13 +18,14 @@
 #include "Materials.h"
 
 using namespace std;
+
 class objFile {
 
 public:
 	objFile(const string DriverFile);
 	objFile();
 	virtual ~objFile();
-	vector<Face> Faces;
+	vector<Face> Faces;// List of faces
 
 private:
 	string ReadOBJ(const string file);
@@ -36,7 +37,6 @@ private:
 	string DriverName;
 	string OBJName;
 	vector<string> File;
-
 	vector<string> v;
 	vector<string> f;
 

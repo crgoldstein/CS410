@@ -26,7 +26,6 @@ LightSource::LightSource() {
 
 
 LightSource::LightSource(string &Driver){
-
 			vector<string> line;
 			boost::split(line, Driver ,boost::is_any_of(" "));
 
@@ -38,7 +37,6 @@ LightSource::LightSource(string &Driver){
 			red =stof((line[5]).c_str(),0);
 		 	green = stof((line[6]).c_str(),0);
 			blue = stof((line[7]).c_str(),0);
-
 }
 
 Eigen::Vector3f LightSource:: getBrightnessVector() {
@@ -52,7 +50,11 @@ Eigen::Vector3f LightSource:: getXYZvector(){
 	return xyz;
 }
 
+string LightSource:: toString(){
+	return " X Y Z: " +to_string(x) + " "+to_string(y) + " "+to_string(z) +  " "+to_string(w) +
+			"\n RGB: "+ to_string(red) + " "+ to_string(green)  + " "+ to_string(blue);
 
+}
 
 LightSource::~LightSource() {
 	// TODO Auto-generated destructor stub

@@ -20,6 +20,8 @@ public:
 	int getRed() ;
 	int getGreen() ;
 	int getBlue() ;
+	float CapColor(float color);
+
 	virtual ~ColorTriple();
 	string toString();
 

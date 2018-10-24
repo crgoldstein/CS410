@@ -13,6 +13,8 @@
 #include <Eigen/Dense>
 #include <vector>
 #include "point.h"
+#include "Face.h"
+#include "Sphere.h"
 #include <string>
 
 using namespace std;
@@ -22,14 +24,24 @@ using namespace std;
 class Ray {
 public:
 	Ray();
-	Ray(const Eigen::Vector3f &P, const float t, const Eigen::Vector3f &D);
+	Ray(const Eigen::Vector3f &P, const Eigen::Vector3f &D);
 	virtual ~Ray();
-	Eigen::Vector3f getRayVector();
+
+	float RayTriangleInterection(Face &f);
+	float  RaySphereInterection(Sphere &S);
+
+
 	string toString();
 
 	Eigen::Vector3f Pixel;
-	float T;
 	Eigen::Vector3f Direction;
+
+	float minTface;//
+	Face closestFace;
+
+	float minTsphere;//
+	Sphere ClosestSphere;
+
 };
 
 #endif /* RAY_H_ */

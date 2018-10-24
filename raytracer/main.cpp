@@ -23,7 +23,7 @@
 #include "AmbientLight.h"
 #include "LightSource.h"
 #include "PPMFile.h"
-
+#include "Sphere.h"
 
 using namespace std;
 
@@ -42,6 +42,7 @@ int main(int argc, char* argv[])
 	{
 		PPMFile ppmFile(argv[2]);
 		vector <string> model;
+		vector <string> sphere;
 		vector <string> cameraElements;
 		vector <string> light;
 		string ambient;
@@ -55,9 +56,10 @@ int main(int argc, char* argv[])
 			{
 				string line;
 				while(getline(driver,line)){
+
 					if (line.find("#") != std::string::npos) {}
 
-					if (line.find("light") != std::string::npos )
+					else if (line.find("light") != std::string::npos )
 						light.push_back(line);
 
 					else if (line.find("ambient") != std::string::npos )
@@ -65,32 +67,39 @@ int main(int argc, char* argv[])
 
 					else if (line.find("model") != std::string::npos )
 						model.push_back(line);
+
+					else if (line.find("sphere") != std::string::npos )
+						sphere.push_back(line);
 					else
 						cameraElements.push_back(line);
 				}
 			}
 
-		 //Set up lighting
-		AmbientLight backgorund(ambient);
+//Set up lighting
+		AmbientLight backgorundLight(ambient);
 
 		vector<LightSource> Lighting;
 		for(string L : light){
-			LightSource s(L);
-			Lighting.push_back(s);
+			Lighting.push_back(LightSource (L));
 		}
+
+		vector<Sphere> sph;
+		for (string S: sphere){
+			sph.push_back(Sphere (S));
+		}
+
 
 		vector<objFile> OBJs;
 		for (string M : model){
-			objFile m(M);
-			 OBJs.push_back(m);
+			 OBJs.push_back(objFile (M));
 		}
 
 		 // Set Up Camera model
-		 CameraModel CAMERA(cameraElements,Lighting,backgorund,OBJs);
+		 CameraModel CAMERA(cameraElements,Lighting,backgorundLight,OBJs,sph);
 
 		cout<<"Run "<<endl;
-		//CAMERA.testP2();
-		vector<vector<ColorTriple> >  FileColor= CAMERA.Run();
+		//CAMERA.testP3();
+		vector<vector<ColorTriple> >  FileColor = CAMERA.Run();
 		ppmFile.write(FileColor);
 		 return 0;
 	}

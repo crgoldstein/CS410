@@ -35,7 +35,6 @@ point point:: Vector2Point(const Eigen::Vector3f &v){
 	return X;
 }
 
-
 Eigen::Vector3f point::getVector(){
 	Eigen::Vector3f point(x,y,z);
 	return point;
@@ -44,6 +43,7 @@ Eigen::Vector3f point::getVector(){
 string point:: toString(){
 	return "X "+ to_string(this->x) + ", Y "+ to_string(this->y) + ", Z "+ to_string(this->z);
 }
+
 point::~point() {
 	// TODO Auto-generated destructor stub
 }
