@@ -45,6 +45,12 @@ private:
 	ColorTriple  COLOR_PIXEL (Ray &ray, Eigen::Vector3f &Normal, Materials &Mat, Eigen::Vector3f &pnt );
 	bool HitsSomething(Ray &ray);
 // Class Variables
+	int GreenHit;
+	int Greenmiss;
+	int RedHit;
+	int Redmiss;
+	int BlueHit;
+	int Bluemiss;
 	point EyeV;
 	point LookV;
 	point UpV;

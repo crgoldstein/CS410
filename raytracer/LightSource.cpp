@@ -29,12 +29,12 @@ LightSource::LightSource(string &Driver){
 			vector<string> line;
 			boost::split(line, Driver ,boost::is_any_of(" "));
 
-			x =stof((line[1]).c_str(),0);
+			x = stof((line[1]).c_str(),0);
 			y = stof((line[2]).c_str(),0);
 			z = stof((line[3]).c_str(),0);
-			w = stof((line[4]).c_str(),0);
+			w = stof((line[4]).c_str(),0);// 0 or 1
 
-			red =stof((line[5]).c_str(),0);
+			red = stof((line[5]).c_str(),0);
 		 	green = stof((line[6]).c_str(),0);
 			blue = stof((line[7]).c_str(),0);
 }

@@ -33,7 +33,7 @@ public:
 
 	string toString();
 
-	Eigen::Vector3f Pixel;
+	Eigen::Vector3f pointL;
 	Eigen::Vector3f Direction;
 
 	float minTface;//

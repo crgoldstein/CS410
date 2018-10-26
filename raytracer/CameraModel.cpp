@@ -27,6 +27,15 @@ LightSourcesList = LightS;
 	OBJs = Objs;
 	SPHs =Sphs;
 
+	GreenHit=0;
+	Greenmiss=0;
+
+	RedHit=0;
+	Redmiss=0;
+
+	BlueHit=0;
+	Bluemiss=0;
+
 		for (int i =  0; i < Driver.size(); i++)
 				   {
 					vector<string> line;
@@ -38,10 +47,10 @@ LightSourcesList = LightS;
 							float b = stof((line[2]).c_str(),0);
 							float c = stof((line[3]).c_str(),0);
 							point X(a, b, c);
-							if (line[0].compare("eye")==0){
+							if (line[0].compare("eye") == 0){
 								 EyeV=X;
 							}
-							else if(line[0].compare("look")==0){
+							else if(line[0].compare("look") == 0){
 								LookV=X;
 							}
 							else if(line[0].compare("up")==0){
@@ -102,10 +111,10 @@ Eigen::Vector3f CameraModel:: pixelPt(const int i, const int j){
 }
 
 ColorTriple CameraModel:: RAY_CAST(Ray &ray){
-	  if (HitsSomething(ray)){
+	if (HitsSomething(ray)){
 			if (ray.minTface < ray.minTsphere){//Triangle is Closer
-				cout<<"RAY_CAST :Hits Triangle  "<<endl;
-				Eigen::Vector3f pnt(ray.Pixel + ray.minTface * ray.Direction.normalized());
+				//cout<<"RAY_CAST :Hits Triangle  "<<endl;
+				Eigen::Vector3f pnt(ray.pointL + ray.minTface * ray.Direction.normalized());
 
 				if (ray.Direction.normalized().dot(ray.closestFace.normal) > 0){// normal is pointing to the inside of the object
 					ray.closestFace.setNormal(-ray.closestFace.normal);// Flip the normal;
@@ -114,36 +123,35 @@ ColorTriple CameraModel:: RAY_CAST(Ray &ray){
 
 			}
 			else{//Sphere is closer
-				cout<<"RAY_CAST :Hits Sphere  "<<endl;
-				Eigen::Vector3f pnt(ray.Pixel + ray.minTsphere *ray.Direction.normalized());
+				//cout<<"RAY_CAST :Hits Sphere  "<<endl;
+				Eigen::Vector3f pnt(ray.pointL + ray.minTsphere *ray.Direction.normalized());
 				Eigen::Vector3f SphereNormal(pnt - ray.ClosestSphere.Center.getVector());//snrm = ptos - sph['c']; snrm = snrm / snrm.norm() # serface Normal
 				SphereNormal = SphereNormal.normalized();
 
 				if (ray.Direction.normalized().dot(SphereNormal) > 0){// normal is pointing to the inside of the object
-					SphereNormal =  -SphereNormal; // Flip the normal;
+					SphereNormal =  -SphereNormal; // Flip the normal
 				}
 
 				return COLOR_PIXEL(ray, SphereNormal, ray.ClosestSphere.Material, pnt);
 			}
 
-		}
-   else {
+	}
+    else{
 			return ColorTriple();/// return background color
-		}
+	}
 }
 
-
 bool CameraModel::HitsSomething(Ray &ray){
-	bool HIT=false;
-	 for (Sphere S : SPHs){
-			   if (ray.RaySphereInterection(S) > 0){// checking if the ray actually hits the Sphere
+	bool HIT = false;
+	for (Sphere S : SPHs){
+			   if ( ray.RaySphereInterection(S) > 0){// checking if the ray actually hits the Sphere
 				   HIT= true;
 		   		}
 			}
 
 	 for(objFile object : OBJs){
 			for(Face face : object.Faces ){
-					if (ray.RayTriangleInterection(face)>0){// checking if the ray actually hits the face
+					if (ray.RayTriangleInterection(face) > 0){// checking if the ray actually hits the face
 						HIT= true;
 					}
 			}
@@ -162,35 +170,54 @@ ColorTriple CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3f &Normal, Materia
 //I= AmbientLight + SUM( Diffuss Light + Specular Light)
 
 //AmbientLight: Ka * Brightness of AmbientLight
-	Illumination = Ka * Ambient.getVector();
-	//cout<<"Ambient lighting "<< Illumination(0)<<" "<<Illumination(1)<<" "<<Illumination(2)<<" "<<endl;
+	Illumination = Ka * Ambient.getVector();//cout<<"Ambient lighting "<< Illumination(0)<<" "<<Illumination(1)<<" "<<Illumination(2)<<" "<<endl;
 
-	for( LightSource L : LightSourcesList ){
-		 Eigen::Vector3f  X();
-		  Ray shadow(pnt, L.getXYZvector().normalized());
-		  if (!HitsSomething(shadow)){
+	for(int i=0; i <LightSourcesList.size(); i++ ){
+		LightSource L(LightSourcesList[i]);
 
+		Ray shadow(pnt, L.getXYZvector());
+		bool hit = HitsSomething(shadow);
+		if (i ==0){
+			//cout<< " Red shadow: "<<shadow.toString()<<endl;
+			if(hit)
+				 RedHit++;
+			else
+		    	 Redmiss++;
+		}
+		if (i == 1 ){
+			//cout<< " green shadow: "<<shadow.toString()<<endl;
+			//cout<<" minTface "<<ray.minTface<<endl;
+			//cout<<" minTSphere "<<ray.minTsphere<<endl;
+			if(hit)
+		    	 GreenHit++;
+		     else
+		    	 Greenmiss++;
+			}
+
+		if (i == 2){
+			if(hit)
+				BlueHit++;
+			else
+				Bluemiss++;
+		}
+
+		if (! hit){//If there is NOT something in the way from point to light COLOR
 					   Eigen::Vector3f lightS(L.getXYZvector() - pnt); lightS = lightS.normalized();
-					   //this line ^^^ is differnt for spheres and triangles ==lightS( L.getXYZvector());
 
 					   if(lightS.dot(Normal) > 0 ){// the light is NOT on the back side of the object
-		//Diffuse :  kd * brighness of light scorce  * (L dot normal)
-						Illumination +=  Kd * L.getBrightnessVector() * lightS.dot(Normal) ;
-						//cout<<"Diffuse lighting "<<Illumination(0)<<" "<<Illumination(1)<<" "<<Illumination(2)<<" "<<endl;
+						   	 //Diffuse :  kd * brighness of light scorce  * (L dot normal)
+							Illumination +=  Kd * L.getBrightnessVector() * lightS.dot(Normal); //cout<<"Diffuse lighting "<<Illumination(0)<<" "<<Illumination(1)<<" "<<Illumination(2)<<" "<<endl;
 
-		//Specular Illumination  : ks * brighness of light scorce * (2(N dot L )* N -L dot V )^phong
-						Eigen::Vector3f toC  = ray.Pixel - pnt ; toC = toC.normalized();
-						Eigen::Vector3f spR  = (2 * lightS.dot(Normal) * Normal) - lightS;
-
-						float CdR  = toC.dot(spR);
-						if (CdR > 0.0){
-							Illumination +=  (Ks * L.getBrightnessVector()) * (pow(CdR ,Mat.phong));
-							//cout<<"AFTER Specular  "<<endl;
-							//cout<<Illumination(0)<<" "<<Illumination(1)<<" "<<Illumination(2)<<endl;
-							}
+							//Specular   : ks * brighness of light scorce * (2(N dot L )* N -L dot V )^phong
+							Eigen::Vector3f toC  = ray.pointL - pnt ; toC = toC.normalized();
+							Eigen::Vector3f spR  = (2 * lightS.dot(Normal) * Normal) - lightS;
+							float CdR  = toC.dot(spR);
+							if (CdR > 0.0){
+								Illumination +=  (Ks * L.getBrightnessVector()) * (pow(CdR ,Mat.phong)); //cout<<"AFTER Specular  "<<Illumination(0)<<" "<<Illumination(1)<<" "<<Illumination(2)<<endl;
+								}
 					   }
-		   	}
-		}
+		   		}
+		}//end of forEach
 
     // write the resulting RGB into the pixel
 	return ColorTriple(Illumination(0),Illumination(1),Illumination(2));
@@ -219,6 +246,10 @@ vector<vector<ColorTriple> > CameraModel:: Run(){
 		FileColor.push_back(temp);
 	}//end of ForLoop x
 
+
+	cout<<"GreenHit "<<GreenHit<< " Greenmiss "<<Greenmiss<<endl;
+	cout<<"RedHit "<<RedHit<< " Redmiss "<<Redmiss<<endl;
+	cout<<"BlueHit "<<BlueHit<< " Bluemiss "<<Bluemiss<<endl;
 	return FileColor;
 
 }

@@ -7,10 +7,11 @@
 
 #include "Ray.h"
 #include "math.h"
+#include <iostream>
 
 
 Ray::Ray(){
-		Pixel << 0,0,0;
+	pointL << 0,0,0;
 		Direction  << 0,0,0;
 
 		minTface=numeric_limits<float>::max();
@@ -23,7 +24,7 @@ Ray::Ray(){
 }
 
 Ray::Ray(const Eigen::Vector3f &P, const Eigen::Vector3f &D) {
-	Pixel = P;
+	pointL = P;
 	Direction = D;
 
 	minTface =numeric_limits<float>::max();
@@ -34,7 +35,7 @@ Ray::Ray(const Eigen::Vector3f &P, const Eigen::Vector3f &D) {
 
 }
 
-float Ray:: RayTriangleInterection(Face &f){//Eigen::Vector3f &A, Eigen::Vector3f &B ,Eigen::Vector3f &C){
+float Ray:: RayTriangleInterection(Face &f){
 	//Cramer's Rule.
 		//This approach involves solving for the determinants of four matrices,
 		//the original M matrix and then three derived by substituting Y into successive columns.
@@ -46,14 +47,16 @@ float Ray:: RayTriangleInterection(Face &f){//Eigen::Vector3f &A, Eigen::Vector3
 							Eigen::Vector3f C(f.C.getVector());
 
 
-							Eigen::Vector3f AminusL(A-Pixel);
+							Eigen::Vector3f AminusL(A-pointL);
 							Eigen::Matrix3f M;   M << (A-B)   ,(A-C),   D;
 							M =M.transpose().eval();
-
+							//printf("pointL %f %f %f\n",pointL(0),pointL(1),pointL(2));
+							//printf("D %f %f %f \n",D(0),D(1),D(2));
 			//BETA
 							Eigen::Matrix3f M1; M1 << AminusL ,(A-C),   D;
 							M1=M1.transpose().eval();
 							float beta = M1.determinant()/ M.determinant();
+							//printf("beta %f\n",beta);
 								if (beta < 0.0)
 									return -1.0;
 
@@ -61,6 +64,7 @@ float Ray:: RayTriangleInterection(Face &f){//Eigen::Vector3f &A, Eigen::Vector3
 							Eigen::Matrix3f M2; M2 << (A-B)   ,AminusL, D;
 							M2=M2.transpose().eval();
 							float gamma = M2.determinant()/ M.determinant();
+							//printf("gamma %f\n",gamma);
 								if (gamma < 0.0)
 									return -1.0;
 								if (beta +gamma >1.0)
@@ -70,18 +74,17 @@ float Ray:: RayTriangleInterection(Face &f){//Eigen::Vector3f &A, Eigen::Vector3
 							Eigen::Matrix3f M3; M3 << (A-B) ,(A-C),   AminusL;
 							M3=M3.transpose().eval();
 							float t = M3.determinant()/ M.determinant();
-								if (t>0){
-
-									if (t < minTface){ // checking if its the first visible surface aka the Smallest T value
+							//printf("t %f\n",t);
+							if (t>0.0001){
+									if (t < minTface ){ // checking if its the first visible surface aka the Smallest T value
 										minTface = t;
 										closestFace = f;
 									}
-
 									return t;
-								}
-								else{
+							}
+							else{
 									return -1.0;
-								}
+							}
 
 
 }
@@ -89,7 +92,7 @@ float Ray:: RayTriangleInterection(Face &f){//Eigen::Vector3f &A, Eigen::Vector3
 float Ray:: RaySphereInterection(Sphere &S){
 
 	  	Eigen::Vector3f D = Direction; D=D.normalized().eval();
-		Eigen::Vector3f Tv = (S.Center.getVector() - Pixel);
+		Eigen::Vector3f Tv = (S.Center.getVector() - pointL);
 	    float v    = Tv.dot(D) ;
 	    float csq  = Tv.dot(Tv) ;
 	    float disc = pow(S.radius,2 ) - (csq - pow(v,2));
@@ -99,7 +102,7 @@ float Ray:: RaySphereInterection(Sphere &S){
 	    else {
 	        float d  = sqrt(disc);
 	        float t  = v - d;
-	        if (t < minTface && t>0.00001){ // checking if its the first visible surface aka the Smallest T value
+	        if (t < minTsphere && t>0.00001){ // checking if its the first visible surface aka the Smallest T value
 	        	minTsphere = t;
 	        	ClosestSphere = S;
 	        }
@@ -108,10 +111,10 @@ float Ray:: RaySphereInterection(Sphere &S){
 }
 
 string Ray::toString(){
-	return "Pixel  " + to_string(Pixel(0))+" "+to_string( Pixel(1))+" "+ to_string(Pixel(2))
-			+ "\nDirection  " +to_string(Direction(0))+" " +to_string(Direction(1))+" " +to_string(Direction(2))+" "
-			+"\n minTface"+ to_string(minTface)
-			+"\n minTsphere"+ to_string(minTsphere);
+	return "pointL  " + to_string(pointL(0))+" "+to_string( pointL(1))+" "+ to_string(pointL(2))
+			+ "\nDirection  " +to_string(Direction(0))+" " +to_string(Direction(1))+" " +to_string(Direction(2))+" ";
+			//+"\n minTface"+ to_string(minTface)
+			//+"\n minTsphere"+ to_string(minTsphere);
 
 }
 
