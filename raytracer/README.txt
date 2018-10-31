@@ -1,10 +1,10 @@
 README.txt
 ------------
 
-CS410 Assignment 2:
+CS410 Assignment 3:
 ---------------------
 
-	This is the starting point for a full ray-tracing program. This project reads 3D camera specifications and one or more 3D objects defined in a driver file along with light source specifications and material properties of the objects. Thus rendering a colorful scene. This project only has the illumination model that includes ambient and diffuse components.
+	This is the starting point for a full ray-tracing program. This project reads 3D camera specifications and one or more 3D objects defined in a driver file along with light source specifications and material properties of the objects. Thus rendering a colorful scene. This project only has the illumination model that has the ability to render polygons , spheres, ambient, diffuse and specular reflection and shadows.
 
 
 How To Run:
@@ -38,6 +38,7 @@ File list:
 |-- Ray.h & Ray.cpp				Holds a Point and a Direction
 |-- ColorTriple.h & ColorTriple.cpp		Converts the 0-1 range to 0 - 255 Range for the RBG image
 |-- PPMFile.h & PPMFile.cpp			Writes out the 2D Vector of ColorTriple’s to the PPM format
+|-- Sphere & Sphere.h				Sphere Lays out Lighting and position for the sphere objects 
 |-- main.cpp					Reads in Argument line and
 |-- eigen-eigen-b9cd8366d4e8			Directory that holds the linear algebra library. 
 |-- Makefile					MakeFile

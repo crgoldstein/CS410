@@ -26,15 +26,15 @@ Sphere::Sphere(const string Driver) {
 				vector<string> line;
 				boost::split(line, Driver, boost::is_any_of(" "));
 				//Point Center
-			    float x = strtof(line[1].c_str(),0);
-				float y = strtof(line[2].c_str(),0);
-				float z = strtof(line[3].c_str(),0);
+			  double x = strtof(line[1].c_str(),0);
+				double y = strtof(line[2].c_str(),0);
+				double z = strtof(line[3].c_str(),0);
 
 				Center = point( x ,y, z) ;
 				radius = strtof(line[4].c_str(),0);
 
 				//Materials
-				vector<float> Mats;
+				vector<double> Mats;
 				for (int i =5; i<line.size(); i++){
 					Mats.push_back(strtof(line[i].c_str(),0));
 				}
@@ -52,4 +52,3 @@ string Sphere:: toString(){
 Sphere::~Sphere() {
 	// TODO Auto-generated destructor stub
 }
-

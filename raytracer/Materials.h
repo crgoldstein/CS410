@@ -20,32 +20,32 @@ class Materials {
 
 public:
 	Materials();
-	Materials(vector<float> SphereInfo);
+	Materials(vector<double> SphereInfo);
 	Materials(string fileName);
 	virtual ~Materials();
 	string toString();
-	Eigen::Vector3f getKaVector();
-	Eigen::Vector3f getKdVector();
-	Eigen::Vector3f getKsVector();
+	Eigen::Vector3d getKaVector();
+	Eigen::Vector3d getKdVector();
+	Eigen::Vector3d getKsVector();
 
 
-	float phong;
+	double phong;
 
-	float KaRed	;
-	float KaGreen;
-	float KaBlue;
+	double KaRed	;
+	double KaGreen;
+	double KaBlue;
 
-	float KdRed;
-	float KdGreen;
-	float KdBlue;
+	double KdRed;
+	double KdGreen;
+	double KdBlue;
 
-	float KsRed;
-	float KsGreen;
-	float KsBlue;
+	double KsRed;
+	double KsGreen;
+	double KsBlue;
 
-	float KrRed;
-	float KrGreen;
-	float KrBlue;
+	double KrRed;
+	double KrGreen;
+	double KrBlue;
 
 };
 

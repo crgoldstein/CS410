@@ -20,19 +20,19 @@ class point {
 public:
 	point();
 
-	point(const float X, const float Y, const float Z);
+	point(const double X, const double Y, const double Z);
 	virtual ~point();
-	Eigen::Vector3f getVector();
-	float getX();
-	float getY();
-	float getZ();
+	Eigen::Vector3d getVector();
+	double getX();
+	double getY();
+	double getZ();
 	string toString();
-	point Vector2Point(const Eigen::Vector3f &v);
+	point Vector2Point(const Eigen::Vector3d &v);
 
 
 
 private:
-	float x,y,z;
+	double x,y,z;
 
 };
 

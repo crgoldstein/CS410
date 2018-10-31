@@ -39,14 +39,14 @@ LightSource::LightSource(string &Driver){
 			blue = stof((line[7]).c_str(),0);
 }
 
-Eigen::Vector3f LightSource:: getBrightnessVector() {
+Eigen::Vector3d LightSource:: getBrightnessVector() {
 
-	Eigen::Vector3f B(red,green,blue);
+	Eigen::Vector3d B(red,green,blue);
 	return B;
 }
-Eigen::Vector3f LightSource:: getXYZvector(){
+Eigen::Vector3d LightSource:: getXYZvector(){
 
-	Eigen::Vector3f xyz(x,y,z);
+	Eigen::Vector3d xyz(x,y,z);
 	return xyz;
 }
 
@@ -59,4 +59,3 @@ string LightSource:: toString(){
 LightSource::~LightSource() {
 	// TODO Auto-generated destructor stub
 }
-

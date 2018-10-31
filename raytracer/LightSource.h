@@ -19,8 +19,8 @@ class LightSource {
 public:
 	LightSource();
 	LightSource(string &Driver);
-	Eigen::Vector3f getBrightnessVector() ;
-	Eigen::Vector3f  getXYZvector();
+	Eigen::Vector3d getBrightnessVector() ;
+	Eigen::Vector3d  getXYZvector();
 	string toString();
 	virtual ~LightSource();
 
@@ -35,9 +35,9 @@ public:
 	int w;
 
 	//The last three values indicate the red, green, and blue levels of the light source on a zero to one scale.
-	float red;
-	float green;
-	float blue;
+	double red;
+	double green;
+	double blue;
 
 
 };

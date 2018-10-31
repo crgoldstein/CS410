@@ -43,9 +43,9 @@ LightSourcesList = LightS;
 
 					if (line.size() ==4){
 
-							float a = stof((line[1]).c_str(),0);
-							float b = stof((line[2]).c_str(),0);
-							float c = stof((line[3]).c_str(),0);
+							double a = stof((line[1]).c_str(),0);
+							double b = stof((line[2]).c_str(),0);
+							double c = stof((line[3]).c_str(),0);
 							point X(a, b, c);
 							if (line[0].compare("eye") == 0){
 								 EyeV=X;
@@ -82,9 +82,9 @@ LightSourcesList = LightS;
 
 
 
-				Eigen::Vector3f wv(0,0,0);
-				Eigen::Vector3f uv(0,0,0);
-				Eigen::Vector3f vv(0,0,0);
+				Eigen::Vector3d wv(0,0,0);
+				Eigen::Vector3d uv(0,0,0);
+				Eigen::Vector3d vv(0,0,0);
 
 				wv << EyeV.getVector() - LookV.getVector();;
 				wv = wv.normalized();
@@ -98,10 +98,10 @@ LightSourcesList = LightS;
 
 }
 
-Eigen::Vector3f CameraModel:: pixelPt(const int i, const int j){
-    float px = (float)i/(width-1)*(right-left)+left;
+Eigen::Vector3d CameraModel:: pixelPt(const int i, const int j){
+    double px = (double)i/(width-1)*(right-left)+left;
 
-    float py = (float)j/(height-1)*(bottom-top)+top;
+    double py = (double)j/(height-1)*(bottom-top)+top;
 
     return EyeV.getVector()
 			+ (near * Wv.getVector())
@@ -114,18 +114,19 @@ ColorTriple CameraModel:: RAY_CAST(Ray &ray){
 	if (HitsSomething(ray)){
 			if (ray.minTface < ray.minTsphere){//Triangle is Closer
 				//cout<<"RAY_CAST :Hits Triangle  "<<endl;
-				Eigen::Vector3f pnt(ray.pointL + ray.minTface * ray.Direction.normalized());
-
+				Eigen::Vector3d pnt(ray.pointL + ray.minTface * ray.Direction.normalized());
 				if (ray.Direction.normalized().dot(ray.closestFace.normal) > 0){// normal is pointing to the inside of the object
 					ray.closestFace.setNormal(-ray.closestFace.normal);// Flip the normal;
 				}
+
 				return COLOR_PIXEL(ray, ray.closestFace.normal, ray.closestFace.Material, pnt);
 
 			}
 			else{//Sphere is closer
 				//cout<<"RAY_CAST :Hits Sphere  "<<endl;
-				Eigen::Vector3f pnt(ray.pointL + ray.minTsphere *ray.Direction.normalized());
-				Eigen::Vector3f SphereNormal(pnt - ray.ClosestSphere.Center.getVector());//snrm = ptos - sph['c']; snrm = snrm / snrm.norm() # serface Normal
+				Eigen::Vector3d pnt(ray.pointL + ray.minTsphere * ray.Direction.normalized());
+				Eigen::Vector3d r(ray.ClosestSphere.Center.getVector());
+				Eigen::Vector3d SphereNormal(pnt - r);//snrm = ptos - sph['c']; snrm = snrm / snrm.norm() # serface Normal
 				SphereNormal = SphereNormal.normalized();
 
 				if (ray.Direction.normalized().dot(SphereNormal) > 0){// normal is pointing to the inside of the object
@@ -143,6 +144,7 @@ ColorTriple CameraModel:: RAY_CAST(Ray &ray){
 
 bool CameraModel::HitsSomething(Ray &ray){
 	bool HIT = false;
+
 	for (Sphere S : SPHs){
 			   if ( ray.RaySphereInterection(S) > 0){// checking if the ray actually hits the Sphere
 				   HIT= true;
@@ -160,13 +162,13 @@ bool CameraModel::HitsSomething(Ray &ray){
 	return HIT;
 }
 
-ColorTriple CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3f &Normal, Materials &Mat, Eigen::Vector3f &pnt ){
+ColorTriple CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3d &Normal, Materials &Mat, Eigen::Vector3d &pnt ){
 
-	Eigen::MatrixXf Ka = Eigen::MatrixXf::Identity(3, 3); Ka(0,0)=Mat.KaRed; Ka(1,1)=Mat.KaGreen; Ka(2,2)=Mat.KaBlue;
-	Eigen::MatrixXf Kd = Eigen::MatrixXf::Identity(3, 3); Kd(0,0)=Mat.KdRed; Kd(1,1)=Mat.KdGreen; Kd(2,2)=Mat.KdBlue;
-	Eigen::MatrixXf Ks = Eigen::MatrixXf::Identity(3, 3); Ks(0,0)=Mat.KsRed; Ks(1,1)=Mat.KsGreen; Ks(2,2)=Mat.KsBlue;
+	Eigen::MatrixXd Ka = Eigen::MatrixXd::Identity(3, 3); Ka(0,0)=Mat.KaRed; Ka(1,1)=Mat.KaGreen; Ka(2,2)=Mat.KaBlue;
+	Eigen::MatrixXd Kd = Eigen::MatrixXd::Identity(3, 3); Kd(0,0)=Mat.KdRed; Kd(1,1)=Mat.KdGreen; Kd(2,2)=Mat.KdBlue;
+	Eigen::MatrixXd Ks = Eigen::MatrixXd::Identity(3, 3); Ks(0,0)=Mat.KsRed; Ks(1,1)=Mat.KsGreen; Ks(2,2)=Mat.KsBlue;
 
-	Eigen::Vector3f Illumination(0,0,0) ;
+	Eigen::Vector3d Illumination(0,0,0) ;
 //I= AmbientLight + SUM( Diffuss Light + Specular Light)
 
 //AmbientLight: Ka * Brightness of AmbientLight
@@ -201,17 +203,17 @@ ColorTriple CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3f &Normal, Materia
 				Bluemiss++;
 		}
 
-		if (! hit){//If there is NOT something in the way from point to light COLOR
-					   Eigen::Vector3f lightS(L.getXYZvector() - pnt); lightS = lightS.normalized();
+		if (!hit){//If there is NOT something in the way from point to light COLOR
+					   Eigen::Vector3d lightS(L.getXYZvector() - pnt); lightS = lightS.normalized();
 
 					   if(lightS.dot(Normal) > 0 ){// the light is NOT on the back side of the object
 						   	 //Diffuse :  kd * brighness of light scorce  * (L dot normal)
 							Illumination +=  Kd * L.getBrightnessVector() * lightS.dot(Normal); //cout<<"Diffuse lighting "<<Illumination(0)<<" "<<Illumination(1)<<" "<<Illumination(2)<<" "<<endl;
 
 							//Specular   : ks * brighness of light scorce * (2(N dot L )* N -L dot V )^phong
-							Eigen::Vector3f toC  = ray.pointL - pnt ; toC = toC.normalized();
-							Eigen::Vector3f spR  = (2 * lightS.dot(Normal) * Normal) - lightS;
-							float CdR  = toC.dot(spR);
+							Eigen::Vector3d toC  = ray.pointL - pnt ; toC = toC.normalized();
+							Eigen::Vector3d spR  = (2 * lightS.dot(Normal) * Normal) - lightS;
+							double CdR  = toC.dot(spR);
 							if (CdR > 0.0){
 								Illumination +=  (Ks * L.getBrightnessVector()) * (pow(CdR ,Mat.phong)); //cout<<"AFTER Specular  "<<Illumination(0)<<" "<<Illumination(1)<<" "<<Illumination(2)<<endl;
 								}
@@ -228,7 +230,7 @@ vector<vector<ColorTriple> > CameraModel:: Run(){
 
 	vector<vector<ColorTriple> > FileColor;
 	ColorTriple rgb;
-	Eigen::Vector3f pixel, Direction;
+	Eigen::Vector3d pixel, Direction;
 	for(int x =0; x < height ; x++){
 		vector<ColorTriple> temp;
 		for(int y=0; y <width; y++){
@@ -324,14 +326,14 @@ void CameraModel:: testP2(){
 
 
 					cout<< "\n\nTESTING RayTriangleInterection from sage math  \n A(3,0,0)  B(0,3,0)  C(0,0,3) L(0,0,0) D(1,1,1) \n>>>> β=1/3,γ=1/3,t= sqrt(3"<< endl;
-						Eigen::Vector3f A(3,0,0);
-						Eigen::Vector3f B(0,3,0);
-						Eigen::Vector3f C(0,0,3);
+						Eigen::Vector3d A(3,0,0);
+						Eigen::Vector3d B(0,3,0);
+						Eigen::Vector3d C(0,0,3);
 
-						Eigen::Vector3f L(0,0,0);//pixel
-						Eigen::Vector3f D(1,1,1);//
+						Eigen::Vector3d L(0,0,0);//pixel
+						Eigen::Vector3d D(1,1,1);//
 
-					float T = RayTriangleInterection(L,D,A,B,C);
+					double T = RayTriangleInterection(L,D,A,B,C);
 
 					 cout << "T " << T<< endl;
 

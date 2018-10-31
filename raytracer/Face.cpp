@@ -28,19 +28,19 @@ Face::Face(const point &a, const point &B, const point &C, const Materials &M){
 
 void Face:: calulateNormal(){
 
-	Eigen::Vector3f AB(B.getVector() - A.getVector());
-	Eigen::Vector3f AC(C.getVector() - A.getVector());
-	Eigen::Vector3f Normal = AB.cross(AC);
+	Eigen::Vector3d AB(B.getVector() - A.getVector());
+	Eigen::Vector3d AC(C.getVector() - A.getVector());
+	Eigen::Vector3d Normal = AB.cross(AC);
 	Normal = Normal.normalized().eval();
 	normal= Normal;
 }
 
 
-Eigen::Vector3f Face:: getNormal() {
+Eigen::Vector3d Face:: getNormal() {
 	return normal;
 }
 
-void Face::setNormal(const Eigen::Vector3f  n){
+void Face::setNormal(const Eigen::Vector3d  n){
 	normal=n;
 }
 
@@ -54,4 +54,3 @@ string Face::toString(){
 Face::~Face() {
 	// TODO Auto-generated destructor stub
 }
-

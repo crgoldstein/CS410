@@ -6,7 +6,7 @@ OBJS = main.o Transforms.o objFile.o CameraModel.o AmbientLight.o LightSource.o 
 
 HFILES = Transforms.h objFile.h CameraModel.h  AmbientLight.h LightSource.h point.h Face.h Materials.h Ray.h ColorTriple.h PPMFile.h Sphere.h
 
-CfILES = Transforms.cpp objFile.cpp CameraModel.cpp  AmbientLight.cpp LightSource.cpp point.cpp Face.cpp Materials.cpp Ray.cpp ColorTriple.cpp PPMFile.cpp Sphere.cpp
+CFILES = Transforms.cpp objFile.cpp CameraModel.cpp  AmbientLight.cpp LightSource.cpp point.cpp Face.cpp Materials.cpp Ray.cpp ColorTriple.cpp PPMFile.cpp Sphere.cpp
 
 
 

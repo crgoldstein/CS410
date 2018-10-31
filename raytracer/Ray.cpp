@@ -11,59 +11,59 @@
 
 
 Ray::Ray(){
-	pointL << 0,0,0;
+	    pointL << 0,0,0;
 		Direction  << 0,0,0;
 
-		minTface=numeric_limits<float>::max();
+		minTface=numeric_limits<double>::max();
 		closestFace=Face();
 
-		minTsphere =numeric_limits<float>::max();
+		minTsphere =numeric_limits<double>::max();
 		ClosestSphere = Sphere();
 
 
 }
 
-Ray::Ray(const Eigen::Vector3f &P, const Eigen::Vector3f &D) {
+Ray::Ray(const Eigen::Vector3d &P, const Eigen::Vector3d &D) {
 	pointL = P;
 	Direction = D;
 
-	minTface =numeric_limits<float>::max();
+	minTface =numeric_limits<double>::max();
 	closestFace=Face();
 
-	minTsphere = numeric_limits<float>::max();
+	minTsphere = numeric_limits<double>::max();
 	ClosestSphere = Sphere();
 
 }
 
-float Ray:: RayTriangleInterection(Face &f){
+double Ray:: RayTriangleInterection(Face &f){
 	//Cramer's Rule.
 		//This approach involves solving for the determinants of four matrices,
 		//the original M matrix and then three derived by substituting Y into successive columns.
-	  Eigen::Vector3f D = Direction;
+	  Eigen::Vector3d D = Direction;
 
 			    			D=D.normalized().eval();
-							Eigen::Vector3f A(f.A.getVector());
-							Eigen::Vector3f B(f.B.getVector());
-							Eigen::Vector3f C(f.C.getVector());
+							Eigen::Vector3d A(f.A.getVector());
+							Eigen::Vector3d B(f.B.getVector());
+							Eigen::Vector3d C(f.C.getVector());
 
 
-							Eigen::Vector3f AminusL(A-pointL);
-							Eigen::Matrix3f M;   M << (A-B)   ,(A-C),   D;
+							Eigen::Vector3d AminusL(A-pointL);
+							Eigen::Matrix3d M;   M << (A-B)   ,(A-C),   D;
 							M =M.transpose().eval();
 							//printf("pointL %f %f %f\n",pointL(0),pointL(1),pointL(2));
 							//printf("D %f %f %f \n",D(0),D(1),D(2));
 			//BETA
-							Eigen::Matrix3f M1; M1 << AminusL ,(A-C),   D;
+							Eigen::Matrix3d M1; M1 << AminusL ,(A-C),   D;
 							M1=M1.transpose().eval();
-							float beta = M1.determinant()/ M.determinant();
+							double beta = M1.determinant()/ M.determinant();
 							//printf("beta %f\n",beta);
 								if (beta < 0.0)
 									return -1.0;
 
 			//GAMMA
-							Eigen::Matrix3f M2; M2 << (A-B)   ,AminusL, D;
+							Eigen::Matrix3d M2; M2 << (A-B)   ,AminusL, D;
 							M2=M2.transpose().eval();
-							float gamma = M2.determinant()/ M.determinant();
+							double gamma = M2.determinant()/ M.determinant();
 							//printf("gamma %f\n",gamma);
 								if (gamma < 0.0)
 									return -1.0;
@@ -71,11 +71,11 @@ float Ray:: RayTriangleInterection(Face &f){
 									return -1.0;
 
 			//T
-							Eigen::Matrix3f M3; M3 << (A-B) ,(A-C),   AminusL;
+							Eigen::Matrix3d M3; M3 << (A-B) ,(A-C),   AminusL;
 							M3=M3.transpose().eval();
-							float t = M3.determinant()/ M.determinant();
+							double t = M3.determinant()/ M.determinant();
 							//printf("t %f\n",t);
-							if (t>0.0001){
+							if (t>0.000001){
 									if (t < minTface ){ // checking if its the first visible surface aka the Smallest T value
 										minTface = t;
 										closestFace = f;
@@ -89,19 +89,19 @@ float Ray:: RayTriangleInterection(Face &f){
 
 }
 
-float Ray:: RaySphereInterection(Sphere &S){
+double Ray:: RaySphereInterection(Sphere &S){
 
-	  	Eigen::Vector3f D = Direction; D=D.normalized().eval();
-		Eigen::Vector3f Tv = (S.Center.getVector() - pointL);
-	    float v    = Tv.dot(D) ;
-	    float csq  = Tv.dot(Tv) ;
-	    float disc = pow(S.radius,2 ) - (csq - pow(v,2));
+	  	Eigen::Vector3d D = Direction; D=D.normalized().eval();
+		  Eigen::Vector3d Tv = (S.Center.getVector() - pointL);
+	    double v    = Tv.dot(D) ;
+	    double csq  = Tv.dot(Tv) ;
+	    double disc = pow(S.radius,2 ) - (csq - pow(v,2));
 
 	    if (disc < 0)
 	        return -1.0;
 	    else {
-	        float d  = sqrt(disc);
-	        float t  = v - d;
+	        double d  = sqrt(disc);
+	        double t  = v - d;
 	        if (t < minTsphere && t>0.00001){ // checking if its the first visible surface aka the Smallest T value
 	        	minTsphere = t;
 	        	ClosestSphere = S;
@@ -121,4 +121,3 @@ string Ray::toString(){
 Ray::~Ray() {
 	// TODO Auto-generated destructor stub
 }
-

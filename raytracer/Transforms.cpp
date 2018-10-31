@@ -17,7 +17,7 @@
 using namespace std;
 
 
-Transforms::Transforms( float rotateP[],  float theta,   float scale,  float translate[] ){
+Transforms::Transforms( double rotateP[],  double theta,   double scale,  double translate[] ){
 	RotateV=rotateP;
 	ThetaV =theta;
 	ScaleV = scale;
@@ -36,12 +36,12 @@ Transforms::~Transforms() {
 	// TODO Auto-generated destructor stub
 }
 
-Eigen::MatrixXf Transforms::getRotate(const float vector[], const float theta){
+Eigen::MatrixXd Transforms::getRotate(const double vector[], const double theta){
 	//Axis Angle Rotation
-		Eigen::Vector3f Wv(vector[0],vector[1],vector[2]);
-		Eigen::Vector3f Mv(0,0,0);
-		Eigen::Vector3f Uv(0,0,0);
-		Eigen::Vector3f Vv(0,0,0);
+		Eigen::Vector3d Wv(vector[0],vector[1],vector[2]);
+		Eigen::Vector3d Mv(0,0,0);
+		Eigen::Vector3d Uv(0,0,0);
+		Eigen::Vector3d Vv(0,0,0);
 
 		Wv = Wv.normalized();//.normalized()  Returns an expression of the quotient of *this by its own norm.
 
@@ -49,7 +49,7 @@ Eigen::MatrixXf Transforms::getRotate(const float vector[], const float theta){
 			//1. find a vector M that is not parallel to W.
 			Mv <<abs(Wv(0)) , abs(Wv(1)), abs(Wv(2));
 
-			float MinWv = Wv[0];
+			double MinWv = Wv[0];
 				for(int i =1 ; i<3; i++){
 					if(Wv[i] < MinWv)
 						MinWv=Wv[i];
@@ -71,12 +71,12 @@ Eigen::MatrixXf Transforms::getRotate(const float vector[], const float theta){
 			Uv=Uv.normalized();
 			Vv= Wv.cross(Uv);// why dont you normaize Vv becouse Wv and Uv orthgonal and there for they produce unit leng things
 
-			Eigen::MatrixXf m=Eigen::MatrixXf::Identity(4, 4);
+			Eigen::MatrixXd m=Eigen::MatrixXd::Identity(4, 4);
 				m(0,0) = Uv(0,0);m(0,1) = Uv(1,0);m(0,2) = Uv(2,0);
 				m(1,0) = Vv(0,0);m(1,1) = Vv(1,0);m(1,2) = Vv(2,0);
 				m(2,0) = Wv(0,0);m(2,1) = Wv(1,0);m(2,2) = Wv(2,0);
 
-			Eigen::MatrixXf mT(3, 3);
+			Eigen::MatrixXd mT(3, 3);
 			mT = m.transpose().eval();
 
 
@@ -85,7 +85,7 @@ Eigen::MatrixXf Transforms::getRotate(const float vector[], const float theta){
 		double ca = cos(radian);
 		double sa = sin(radian);
 
-		Eigen::MatrixXf z =Eigen::MatrixXf::Identity(4, 4);
+		Eigen::MatrixXd z =Eigen::MatrixXd::Identity(4, 4);
 			//if axis is Z:
 				z(0,0)= ca;
 				z(0,1)= -sa;
@@ -94,7 +94,7 @@ Eigen::MatrixXf Transforms::getRotate(const float vector[], const float theta){
 
 
 //Putting two Parts Together
-		Eigen::MatrixXf Final(4,4);
+		Eigen::MatrixXd Final(4,4);
 		Final = mT * z * m;
 
 		/*Checks for orthongonality
@@ -117,9 +117,9 @@ Eigen::MatrixXf Transforms::getRotate(const float vector[], const float theta){
 	    return Final;
 }
 
-Eigen::MatrixXf Transforms::getScale(const float scale){
+Eigen::MatrixXd Transforms::getScale(const double scale){
 
-	Eigen::MatrixXf M =Eigen::MatrixXf::Identity(4, 4);
+	Eigen::MatrixXd M =Eigen::MatrixXd::Identity(4, 4);
 		M(0,0)=scale;
 		M(1,1)=scale;
 		M(2,2)=scale;
@@ -128,10 +128,10 @@ Eigen::MatrixXf Transforms::getScale(const float scale){
 }
 
 
-Eigen::MatrixXf Transforms::getTranslate( const float vector[]){
-	Eigen::Vector3f Wv(vector[0],vector[1],vector[2]);
+Eigen::MatrixXd Transforms::getTranslate( const double vector[]){
+	Eigen::Vector3d Wv(vector[0],vector[1],vector[2]);
 
-	Eigen::MatrixXf M = Eigen::MatrixXf::Identity(4, 4);
+	Eigen::MatrixXd M = Eigen::MatrixXd::Identity(4, 4);
 	M(0,3)= vector[0];
 	M(1,3)= vector[1];
 	M(2,3)= vector[2];
@@ -139,13 +139,13 @@ Eigen::MatrixXf Transforms::getTranslate( const float vector[]){
     return M;
 }
 
-Eigen::MatrixXf Transforms::getRST(){
+Eigen::MatrixXd Transforms::getRST(){
 
-    Eigen::MatrixXf RotateM = getRotate(RotateV,ThetaV);
-    Eigen::MatrixXf ScaleM = getScale(ScaleV);
-    Eigen::MatrixXf TranslateM = getTranslate(TranslateV);
+    Eigen::MatrixXd RotateM = getRotate(RotateV,ThetaV);
+    Eigen::MatrixXd ScaleM = getScale(ScaleV);
+    Eigen::MatrixXd TranslateM = getTranslate(TranslateV);
 
-    Eigen::MatrixXf M= TranslateM*ScaleM*RotateM ;
+    Eigen::MatrixXd M= TranslateM*ScaleM*RotateM ;
 
     return M;
 

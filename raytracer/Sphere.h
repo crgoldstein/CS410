@@ -25,7 +25,7 @@ public:
 
 
 	point Center;
-	float radius ;
+	double radius ;
 	Materials Material;
 
 };

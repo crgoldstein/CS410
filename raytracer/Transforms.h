@@ -14,26 +14,26 @@ class Transforms {
 
 public:
 //Constructors
-	Transforms(float rotate[] ,float theta ,float scale , float translate[]);
+	Transforms(double rotate[] ,double theta ,double scale , double translate[]);
 	Transforms();
 	virtual ~Transforms();
 
-	Eigen::MatrixXf getRST();
+	Eigen::MatrixXd getRST();
 
 
 // Class varibles
 private:
-		Eigen::MatrixXf getRotate(const float vector[], const float theta);
+		Eigen::MatrixXd getRotate(const double vector[], const double theta);
 
-		Eigen::MatrixXf getScale(const float scale);
+		Eigen::MatrixXd getScale(const double scale);
 
-		Eigen::MatrixXf getTranslate(const float vector[]);
+		Eigen::MatrixXd getTranslate(const double vector[]);
 
 		//Class varibles
-		float* RotateV;
-		float ThetaV;
-		float ScaleV;
-		float* TranslateV;
+		double* RotateV;
+		double ThetaV;
+		double ScaleV;
+		double* TranslateV;
 
 };
 

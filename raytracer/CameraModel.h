@@ -39,10 +39,10 @@ public:
 
 
 private:
-	Eigen::Vector3f pixelPt(const int i,const int j);
+	Eigen::Vector3d pixelPt(const int i,const int j);
 
 	ColorTriple  RAY_CAST(Ray &ray);//why can't i pass by referance
-	ColorTriple  COLOR_PIXEL (Ray &ray, Eigen::Vector3f &Normal, Materials &Mat, Eigen::Vector3f &pnt );
+	ColorTriple  COLOR_PIXEL (Ray &ray, Eigen::Vector3d &Normal, Materials &Mat, Eigen::Vector3d &pnt );
 	bool HitsSomething(Ray &ray);
 // Class Variables
 	int GreenHit;
@@ -60,10 +60,10 @@ private:
 	point Wv;// z
 
 	//distance from the focal point to the image plane (near clipping plane)
-	float near;
+	double near;
 	//indicate the minimum and maximum extend of the bounded image
 	//rectangle on the infinite image plane in the camera horizontal and vertical directions respectively.
-	float left,right,top,bottom;
+	double left,right,top,bottom;
 	//the resolution values separately indicate the pixel sampling resolution across the horizontal and vertical dimensions of the bounded rectangle.
 	int width, height;
 

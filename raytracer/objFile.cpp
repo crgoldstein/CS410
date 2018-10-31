@@ -20,10 +20,10 @@ objFile::objFile(const string Driver) {
 		//  0	1	2	3 	4  5  6  7    8      9
 		//model 1.0 1.0 0.0 30 2 0.0 0.0 -15.0 cube_centered.obj
 
-		float rotate[3] = {strtof((results[1]).c_str(),0), strtof((results[2]).c_str(),0) ,strtof((results[3]).c_str(),0)};
-		float theta= strtof((results[4]).c_str(),0);
-		float scale = strtof((results[5]).c_str(),0);
-		float Transform[3]= {strtof((results[6]).c_str(),0), strtof((results[7]).c_str(),0) ,strtof((results[8]).c_str(),0)};
+		double rotate[3] = {strtof((results[1]).c_str(),0), strtof((results[2]).c_str(),0) ,strtof((results[3]).c_str(),0)};
+		double theta= strtof((results[4]).c_str(),0);
+		double scale = strtof((results[5]).c_str(),0);
+		double Transform[3]= {strtof((results[6]).c_str(),0), strtof((results[7]).c_str(),0) ,strtof((results[8]).c_str(),0)};
 
 		// send to new Object
 		Transforms T(rotate, theta, scale, Transform);
@@ -31,9 +31,9 @@ objFile::objFile(const string Driver) {
 		//Reading OBJ file
 		string Material = ReadOBJ(results[9]);
 		//Rotating and Updating the V poitns
-		Eigen::MatrixXf  RST (T.getRST());
-		Eigen::MatrixXf  Vpts(getVpoints());
-	 	Eigen::MatrixXf  RSTPoints(RST*Vpts.transpose());
+		Eigen::MatrixXd  RST (T.getRST());
+		Eigen::MatrixXd  Vpts(getVpoints());
+	 	Eigen::MatrixXd  RSTPoints(RST*Vpts.transpose());
 	 	setVpoints(RSTPoints);
 	 	//Make Face Objects that have points ABC and Materials
 	 	MakeFaces(Material);
@@ -78,9 +78,9 @@ string objFile:: ReadOBJ(const string fileName){
 
 }
 
-Eigen::MatrixXf objFile:: getVpoints(){
+Eigen::MatrixXd objFile:: getVpoints(){
 
-	Eigen::MatrixXf m (v.size(),4);
+	Eigen::MatrixXd m (v.size(),4);
 			for(int i=0; i<v.size(); i++)
 			{
 				vector<string> results;
@@ -95,8 +95,8 @@ Eigen::MatrixXf objFile:: getVpoints(){
 	return m;
 }
 
-void objFile::setVpoints(Eigen::MatrixXf &points) {
-	//Eigen::MatrixXf newV = *points;
+void objFile::setVpoints(Eigen::MatrixXd &points) {
+	//Eigen::MatrixXd newV = *points;
 	for(int i =0; i<v.size(); i++){
 		string x = to_string(points(0,i));
 		string y = to_string(points(1,i));
@@ -144,9 +144,9 @@ point objFile:: MakePointFromV(int Index){
 	vector<string> results;
 	boost::split(results, v[Index],boost::is_any_of(" "));
 
-	float a = strtof((results[1]).c_str(),0);
-	float b = strtof((results[2]).c_str(),0);
-	float c = strtof((results[3]).c_str(),0);
+	double a = strtof((results[1]).c_str(),0);
+	double b = strtof((results[2]).c_str(),0);
+	double c = strtof((results[3]).c_str(),0);
 
     point newPoint(a,b,c);
     return newPoint;
@@ -157,4 +157,3 @@ point objFile:: MakePointFromV(int Index){
 objFile::~objFile() {
 	// TODO Auto-generated destructor stub
 }
-

@@ -32,7 +32,7 @@ Materials::Materials() {
 	this->KrBlue= 0;
 }
 
-Materials::Materials(vector<float> SphereInfo){
+Materials::Materials(vector<double> SphereInfo){
 
 		this->KaRed= SphereInfo[0];
 		this->KaGreen= SphereInfo[1];
@@ -56,15 +56,13 @@ Materials::Materials(vector<float> SphereInfo){
 
 
 Materials::Materials(string fileName){
+
 	string location = fileName;
-	ifstream file(location);// getting the file to match
-
+	ifstream file(location);
 	vector<string> File;
-
-			if (! file.is_open())
+			if (!file.is_open())
 			{
-					cout << "Error opening materials  file" <<endl;
-					cout<<"failed at "<<  location <<endl;
+					cout <<" Error opening materials file failed at <"<< location << " > !!!"<<endl;
 					exit (1);
 			}
 			else
@@ -72,7 +70,7 @@ Materials::Materials(string fileName){
 			       string line;
 				   while(getline(file,line)){
 				 		 File.push_back(line);
-				 			}
+				 		}
 			}
 
 				for(int i=0; i<File.size(); i++)
@@ -110,21 +108,21 @@ Materials::Materials(string fileName){
 }
 
 
-Eigen::Vector3f Materials::getKaVector(){
+Eigen::Vector3d Materials::getKaVector(){
 
-	Eigen::Vector3f vectorKA(KaRed, KaGreen, KaBlue );
+	Eigen::Vector3d vectorKA(KaRed, KaGreen, KaBlue );
 	return vectorKA;
 
 }
-Eigen::Vector3f Materials:: getKdVector(){
+Eigen::Vector3d Materials:: getKdVector(){
 
-		Eigen::Vector3f vectorKd(KdRed, KdGreen, KdBlue );
+		Eigen::Vector3d vectorKd(KdRed, KdGreen, KdBlue );
 		return vectorKd;
 
 }
-Eigen::Vector3f Materials:: getKsVector(){
+Eigen::Vector3d Materials:: getKsVector(){
 
-			Eigen::Vector3f vectorKs(KsRed, KsGreen, KsBlue) ;
+			Eigen::Vector3d vectorKs(KsRed, KsGreen, KsBlue) ;
 			return vectorKs;
 }
 
@@ -139,4 +137,3 @@ string Materials::toString(){
 Materials::~Materials() {
 	// TODO Auto-generated destructor stub
 }
-

@@ -29,8 +29,8 @@ public:
 
 private:
 	string ReadOBJ(const string file);
-	Eigen::MatrixXf getVpoints();
-	void setVpoints(Eigen::MatrixXf &points) ;
+	Eigen::MatrixXd getVpoints();
+	void setVpoints(Eigen::MatrixXd &points) ;
 	void MakeFaces(string &MaterialString);
 	point MakePointFromV(int Index);
 

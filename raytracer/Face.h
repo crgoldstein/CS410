@@ -23,8 +23,8 @@ public:
 	Face();
 	Face(const point &a ,const point &B, const point &C, const Materials &M); //??? Wont let me pass by &
 	void calulateNormal();
-	Eigen::Vector3f getNormal() ;
-	void setNormal(const Eigen::Vector3f n);
+	Eigen::Vector3d getNormal() ;
+	void setNormal(const Eigen::Vector3d n);
 	virtual ~Face();
 	string toString();
 
@@ -33,7 +33,7 @@ public:
 	point B;
 	point C;
 	Materials Material;
-	Eigen::Vector3f normal;
+	Eigen::Vector3d normal;
 
 
 };

@@ -12,31 +12,31 @@ point::point() {
 	this->z=0;
 
 }
-point::point( const float X, const float Y, const float Z) {
+point::point( const double X, const double Y, const double Z) {
 	this->x=X;
 	this->y=Y;
 	this->z=Z;
 
 }
 
-float point:: getX(){
+double point:: getX(){
 	return this->x;
 }
-float  point:: getY(){
+double  point:: getY(){
 	return this->y;
 }
-float point:: getZ(){
+double point:: getZ(){
 	return this->z;
 }
 
-point point:: Vector2Point(const Eigen::Vector3f &v){
+point point:: Vector2Point(const Eigen::Vector3d &v){
 
 	point X(v(0),v(1),v(2));
 	return X;
 }
 
-Eigen::Vector3f point::getVector(){
-	Eigen::Vector3f point(x,y,z);
+Eigen::Vector3d point::getVector(){
+	Eigen::Vector3d point(x,y,z);
 	return point;
 }
 
@@ -47,4 +47,3 @@ string point:: toString(){
 point::~point() {
 	// TODO Auto-generated destructor stub
 }
-

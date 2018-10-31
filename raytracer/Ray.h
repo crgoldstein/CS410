@@ -24,22 +24,22 @@ using namespace std;
 class Ray {
 public:
 	Ray();
-	Ray(const Eigen::Vector3f &P, const Eigen::Vector3f &D);
+	Ray(const Eigen::Vector3d &P, const Eigen::Vector3d &D);
 	virtual ~Ray();
 
-	float RayTriangleInterection(Face &f);
-	float  RaySphereInterection(Sphere &S);
+	double RayTriangleInterection(Face &f);
+	double  RaySphereInterection(Sphere &S);
 
 
 	string toString();
 
-	Eigen::Vector3f pointL;
-	Eigen::Vector3f Direction;
+	Eigen::Vector3d pointL;
+	Eigen::Vector3d Direction;
 
-	float minTface;//
+	double minTface;//
 	Face closestFace;
 
-	float minTsphere;//
+	double minTsphere;//
 	Sphere ClosestSphere;
 
 };
