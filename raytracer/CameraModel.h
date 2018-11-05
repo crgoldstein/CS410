@@ -33,24 +33,19 @@ public:
 	CameraModel(vector<string> &Driver, vector<LightSource> &LightS,
 				AmbientLight &ambient, vector<objFile> &Objs ,vector<Sphere> &Sphs);
 	virtual ~CameraModel();
-	void testP2();
-	void testP3();
 	vector<vector<ColorTriple> > Run();
 
 
 private:
 	Eigen::Vector3d pixelPt(const int i,const int j);
 
-	ColorTriple  RAY_CAST(Ray &ray);//why can't i pass by referance
-	ColorTriple  COLOR_PIXEL (Ray &ray, Eigen::Vector3d &Normal, Materials &Mat, Eigen::Vector3d &pnt );
+	void RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, int depth);///why can't i pass by referance
+	Eigen::Vector3d  COLOR_PIXEL (Ray &ray, Eigen::Vector3d &Normal, Materials &Mat, Eigen::Vector3d &pnt );
 	bool HitsSomething(Ray &ray);
+
 // Class Variables
-	int GreenHit;
-	int Greenmiss;
-	int RedHit;
-	int Redmiss;
-	int BlueHit;
-	int Bluemiss;
+	int recursionLevel;
+
 	point EyeV;
 	point LookV;
 	point UpV;

@@ -45,9 +45,13 @@ Eigen::Vector3d LightSource:: getBrightnessVector() {
 	return B;
 }
 Eigen::Vector3d LightSource:: getXYZvector(){
+		Eigen::Vector3d xyz(x,y,z);
+		Eigen::Vector3d zero(0,0,0);
+	if (w ==0) {
+			xyz = zero+ 100000000.0 * xyz;
+	}
 
-	Eigen::Vector3d xyz(x,y,z);
-	return xyz;
+		return xyz;
 }
 
 string LightSource:: toString(){

@@ -27,15 +27,6 @@ LightSourcesList = LightS;
 	OBJs = Objs;
 	SPHs =Sphs;
 
-	GreenHit=0;
-	Greenmiss=0;
-
-	RedHit=0;
-	Redmiss=0;
-
-	BlueHit=0;
-	Bluemiss=0;
-
 		for (int i =  0; i < Driver.size(); i++)
 				   {
 					vector<string> line;
@@ -78,9 +69,10 @@ LightSourcesList = LightS;
 						height = stoi(line[2]);
 
 					}
+					else if (line[0].compare("recursionLevel")==0){
+						recursionLevel = stoi(line[1]);
+					}
 				}// end of driver for loop
-
-
 
 				Eigen::Vector3d wv(0,0,0);
 				Eigen::Vector3d uv(0,0,0);
@@ -98,7 +90,7 @@ LightSourcesList = LightS;
 
 }
 
-Eigen::Vector3d CameraModel:: pixelPt(const int i, const int j){
+Eigen::Vector3d CameraModel :: pixelPt(const int i, const int j){
     double px = (double)i/(width-1)*(right-left)+left;
 
     double py = (double)j/(height-1)*(bottom-top)+top;
@@ -110,36 +102,100 @@ Eigen::Vector3d CameraModel:: pixelPt(const int i, const int j){
 
 }
 
-ColorTriple CameraModel:: RAY_CAST(Ray &ray){
+void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, int depth){
+	Eigen::Vector3d color;
+	//printf("HIT something Recrisive depth %d > accumm is [ %f , %f , %f] \n",depth,accumm[0],accumm[1],accumm[2]);
+
 	if (HitsSomething(ray)){
-			if (ray.minTface < ray.minTsphere){//Triangle is Closer
-				//cout<<"RAY_CAST :Hits Triangle  "<<endl;
+
+		if (ray.minTface < ray.minTsphere){ //Triangle is Closer
 				Eigen::Vector3d pnt(ray.pointL + ray.minTface * ray.Direction.normalized());
+
 				if (ray.Direction.normalized().dot(ray.closestFace.normal) > 0){// normal is pointing to the inside of the object
 					ray.closestFace.setNormal(-ray.closestFace.normal);// Flip the normal;
 				}
 
-				return COLOR_PIXEL(ray, ray.closestFace.normal, ray.closestFace.Material, pnt);
+				color = COLOR_PIXEL(ray, ray.closestFace.normal, ray.closestFace.Material, pnt);
+				accumm[0] += color(0) * Refatt(0) ;//red
+				accumm[1] += color(1) * Refatt(1) ;//green
+				accumm[2] += color(2) * Refatt(2) ;//blue
 
+				//Recrisive
+					if (depth > 0){
+						Eigen::MatrixXd Kr = Eigen::MatrixXd::Identity(3, 3);
+						Kr(0,0)=ray.closestFace.Material.KrRed;
+						Kr(1,1)=ray.closestFace.Material.KrGreen;
+						Kr(2,2)=ray.closestFace.Material.KrBlue;
+
+						Refatt =  Kr *Refatt;
+
+						Eigen::Vector3d  NewDir = -1 * ray.Direction;
+						Eigen::Vector3d refR = ((2 * ray.closestFace.normal.dot(NewDir)) * ray.closestFace.normal) - NewDir ;
+						refR= refR.normalized();
+						Ray newRay(pnt , refR);
+
+						RAY_CAST(newRay , Refatt, accumm, depth-1) ;
+					   }
+					else{
+						return ;
+					}
 			}
 			else{//Sphere is closer
-				//cout<<"RAY_CAST :Hits Sphere  "<<endl;
+
 				Eigen::Vector3d pnt(ray.pointL + ray.minTsphere * ray.Direction.normalized());
 				Eigen::Vector3d r(ray.ClosestSphere.Center.getVector());
-				Eigen::Vector3d SphereNormal(pnt - r);//snrm = ptos - sph['c']; snrm = snrm / snrm.norm() # serface Normal
-				SphereNormal = SphereNormal.normalized();
+				Eigen::Vector3d SphereNormal(pnt - r); SphereNormal = SphereNormal.normalized();
 
 				if (ray.Direction.normalized().dot(SphereNormal) > 0){// normal is pointing to the inside of the object
-					SphereNormal =  -SphereNormal; // Flip the normal
+					SphereNormal =  - SphereNormal; // Flip the normal
 				}
 
-				return COLOR_PIXEL(ray, SphereNormal, ray.ClosestSphere.Material, pnt);
-			}
+				color = COLOR_PIXEL(ray, SphereNormal, ray.ClosestSphere.Material, pnt);
+				accumm[0] += color(0) * Refatt(0) ;//red
+				accumm[1] += color(1) * Refatt(1) ;//green
+				accumm[2] += color(2) * Refatt(2) ;//blue
 
+
+				//Recrisive
+					if (depth > 0){
+
+							Eigen::MatrixXd Kr = Eigen::MatrixXd::Identity(3, 3);
+							Kr(0,0) = ray.ClosestSphere.Material.KrRed;
+							Kr(1,1) = ray.ClosestSphere.Material.KrGreen;
+							Kr(2,2) = ray.ClosestSphere.Material.KrBlue;
+							Refatt =  Kr * Refatt;
+
+							Eigen::Vector3d DirInverse = -1 * ray.Direction;
+							Eigen::Vector3d refR = (2 * SphereNormal.dot(DirInverse) * SphereNormal) - DirInverse ;
+							refR = refR.normalized().eval();
+							Ray newRay(pnt , refR);
+
+							cout<<"BEFORE  "<<endl;
+							depth=depth-1;
+
+							RAY_CAST(newRay ,Refatt, accumm, depth);
+							return;
+							cout<<"AFTER new ray  "<<endl;
+
+					}
+					else{
+						return ;
+					}
+
+			}
 	}
-    else{
-			return ColorTriple();/// return background color
+    else{// YOU DONT NOT HIT ANYTHING
+    	if(depth == 0){
+    		 ColorTriple background =ColorTriple();
+    		 accumm[0] += (double) background.getRed() * Refatt(0) ;
+    		 accumm[1] += (double) background.getGreen() * Refatt(1) ;//green
+    		 accumm[2] += (double) background.getBlue() * Refatt(2) ;//blue
+
+    	}
+    	return;
 	}
+
+
 }
 
 bool CameraModel::HitsSomething(Ray &ray){
@@ -154,7 +210,7 @@ bool CameraModel::HitsSomething(Ray &ray){
 	 for(objFile object : OBJs){
 			for(Face face : object.Faces ){
 					if (ray.RayTriangleInterection(face) > 0){// checking if the ray actually hits the face
-						HIT= true;
+						HIT = true;
 					}
 			}
 	 }
@@ -162,7 +218,7 @@ bool CameraModel::HitsSomething(Ray &ray){
 	return HIT;
 }
 
-ColorTriple CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3d &Normal, Materials &Mat, Eigen::Vector3d &pnt ){
+Eigen::Vector3d CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3d &Normal, Materials &Mat, Eigen::Vector3d &pnt ){
 
 	Eigen::MatrixXd Ka = Eigen::MatrixXd::Identity(3, 3); Ka(0,0)=Mat.KaRed; Ka(1,1)=Mat.KaGreen; Ka(2,2)=Mat.KaBlue;
 	Eigen::MatrixXd Kd = Eigen::MatrixXd::Identity(3, 3); Kd(0,0)=Mat.KdRed; Kd(1,1)=Mat.KdGreen; Kd(2,2)=Mat.KdBlue;
@@ -179,29 +235,6 @@ ColorTriple CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3d &Normal, Materia
 
 		Ray shadow(pnt, L.getXYZvector());
 		bool hit = HitsSomething(shadow);
-		if (i ==0){
-			//cout<< " Red shadow: "<<shadow.toString()<<endl;
-			if(hit)
-				 RedHit++;
-			else
-		    	 Redmiss++;
-		}
-		if (i == 1 ){
-			//cout<< " green shadow: "<<shadow.toString()<<endl;
-			//cout<<" minTface "<<ray.minTface<<endl;
-			//cout<<" minTSphere "<<ray.minTsphere<<endl;
-			if(hit)
-		    	 GreenHit++;
-		     else
-		    	 Greenmiss++;
-			}
-
-		if (i == 2){
-			if(hit)
-				BlueHit++;
-			else
-				Bluemiss++;
-		}
 
 		if (!hit){//If there is NOT something in the way from point to light COLOR
 					   Eigen::Vector3d lightS(L.getXYZvector() - pnt); lightS = lightS.normalized();
@@ -222,36 +255,36 @@ ColorTriple CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3d &Normal, Materia
 		}//end of forEach
 
     // write the resulting RGB into the pixel
-	return ColorTriple(Illumination(0),Illumination(1),Illumination(2));
+	return Illumination;
 
 }
 
 vector<vector<ColorTriple> > CameraModel:: Run(){
 
 	vector<vector<ColorTriple> > FileColor;
-	ColorTriple rgb;
+
 	Eigen::Vector3d pixel, Direction;
+
 	for(int x =0; x < height ; x++){
 		vector<ColorTriple> temp;
-		for(int y=0; y <width; y++){
-		// for each pixel in the image to be rendered
+		for(int y=0; y <width; y++){// for each pixel in the image to be rendered
 			       //fire a ray into the scene and determine the first( the smallest  t value) visible surface
 							    // for each pixel hit into each face
-								pixel=pixelPt(x,y);
-								Direction=pixel - EyeV.getVector(); //(pixel point)- eye
-
+								//printf("[%d,%d]\n ",x ,y);
+								pixel = pixelPt(x,y);
+								Direction = pixel - EyeV.getVector(); //(pixel point)- eye
 								Ray r(pixel,Direction);
-								rgb = RAY_CAST(r);
+
+								Eigen::Vector3d Refatt(1,1,1);
+								double accumm[] = {0,0,0};
+								RAY_CAST(r, Refatt, accumm, recursionLevel);
+								ColorTriple rgb(accumm[0],accumm[1],accumm[2]);
 							    temp.push_back(rgb);
 
 		}//end of ForLoop y
 		FileColor.push_back(temp);
 	}//end of ForLoop x
 
-
-	cout<<"GreenHit "<<GreenHit<< " Greenmiss "<<Greenmiss<<endl;
-	cout<<"RedHit "<<RedHit<< " Redmiss "<<Redmiss<<endl;
-	cout<<"BlueHit "<<BlueHit<< " Bluemiss "<<Bluemiss<<endl;
 	return FileColor;
 
 }
@@ -260,97 +293,3 @@ CameraModel::~CameraModel() {
 	// TODO Auto-generated destructor stub
 }
 
-
-void  CameraModel:: testP3(){
-	for (Sphere s : SPHs){
-		cout<<s.toString()<<endl;
-	}
-}
-
-void CameraModel:: testP2(){
-
-	/*
-					cout<<"Testing variables from the Camera Model "<<endl;
-
-					cout<<"EyeV "<< EyeV.toString() <<endl;
-					cout<<"LookV "<< LookV.toString() <<endl;
-					cout<<"UpV "<< UpV.toString() <<endl;
-
-					cout<<"Wv "<< Wv.toString()<<endl;
-					cout<<"Uv "<< Uv.toString()<<endl;
-					cout<<"Vv "<< Vv.toString()<<endl;
-
-
-					cout<<"near "<< near <<endl;
-					cout<<"left "<< left <<endl;
-					cout<<"right "<< right <<endl;
-					cout<<"top "<< top <<endl;
-					cout<<"bottom "<< bottom <<endl;
-					cout<<"width "<< width <<endl;
-					cout<<"height "<< height <<"\n\n"<<endl;
-
-					cout<<"NUMBER OF LightSource:  "<< LightSourcesList.size()<<endl;
-					for( int a = 0; a < LightSourcesList.size(); a++ ){
-						cout<<"LightSource: x "<< LightSourcesList[a].x<<endl;
-						cout<<"LightSource: y "<< LightSourcesList[a].y<<endl;
-						cout<<"LightSource: z "<< LightSourcesList[a].z<<endl;
-						cout<<"LightSource: w "<< LightSourcesList[a].w<<endl;
-						cout<<"LightSource: red "<< LightSourcesList[a].red<<endl;
-						cout<<"LightSource: green "<< LightSourcesList[a].green<<endl;
-						cout<<"LightSource: blue "<< LightSourcesList[a].blue<<endl;
-					}
-
-					cout<<"AmbientLight.red " << Ambient.red<<endl;
-					cout<<"AmbientLight.green " << Ambient.green<<endl;
-					cout<<"AmbientLight.blue " << Ambient.blue<<"\n\n"<<endl;
-
-
-
-					cout<<"NUMBER OF OBJs:  "<< OBJs.size()<<endl;
-					for( int a = 0; a < OBJs.size(); a++ ){
-						cout<<"NUMBER OF Faces:  "<< OBJs[a].Faces.size()<<endl;
-						for( int b = 0; b < OBJs[a].Faces.size(); b++ ){
-							cout<< OBJs[a].Faces[b].toString()<<endl;
-						}
-					}
-
-
-					cout<< "\nTESTING pixelPt "<< endl;
-					// still need to figure out left and top and near
-
-					cout<< "pixelPt (0,0) should be 𝙿𝚇:−2 P𝚈:2 𝚙𝚒𝚡𝚙𝚝:[−2,2,170]"<< endl;
-					cout<< pixelPt(0,0)<< endl;
-
-					cout<< "pixelPt (2,2) should be 𝙿𝚇:−2/3 𝙿Y: 2/3 p𝚒𝚡𝚙𝚝:[−2/3,2/3,170]"<< endl;
-					cout<< pixelPt(2,2)<< endl;
-
-
-					cout<< "\n\nTESTING RayTriangleInterection from sage math  \n A(3,0,0)  B(0,3,0)  C(0,0,3) L(0,0,0) D(1,1,1) \n>>>> β=1/3,γ=1/3,t= sqrt(3"<< endl;
-						Eigen::Vector3d A(3,0,0);
-						Eigen::Vector3d B(0,3,0);
-						Eigen::Vector3d C(0,0,3);
-
-						Eigen::Vector3d L(0,0,0);//pixel
-						Eigen::Vector3d D(1,1,1);//
-
-					double T = RayTriangleInterection(L,D,A,B,C);
-
-					 cout << "T " << T<< endl;
-
-
-					cout<<"\n\nTesting RAY_CAST"<<endl;
-
-					RAY_CAST(1,1);
-
-					cout<<"\n\nTesting COLOR_PIXEL"<<endl;
-
-					Ray r(pixelPt(1, 1), 2, pixelPt(1, 1)-EyeV.getVector());
-					point aa(1,1,50);
-					point bb(1,2,50);
-					point cc(-1,2,50);
-					Materials Mat ("cube_centered.mtl");
-					Face face(aa,bb,cc,Mat);
-					COLOR_PIXEL (r,face);
-					*/
-
-}

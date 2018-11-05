@@ -28,7 +28,7 @@ public:
 	virtual ~Ray();
 
 	double RayTriangleInterection(Face &f);
-	double  RaySphereInterection(Sphere &S);
+	double RaySphereInterection(Sphere &S);
 
 
 	string toString();

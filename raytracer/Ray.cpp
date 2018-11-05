@@ -47,9 +47,10 @@ double Ray:: RayTriangleInterection(Face &f){
 							Eigen::Vector3d C(f.C.getVector());
 
 
-							Eigen::Vector3d AminusL(A-pointL);
-							Eigen::Matrix3d M;   M << (A-B)   ,(A-C),   D;
-							M =M.transpose().eval();
+							Eigen::Vector3d AminusL(A - pointL);
+
+							Eigen::Matrix3d M;   M << (A-B) ,(A-C),  D;
+							M = M.transpose().eval();
 							//printf("pointL %f %f %f\n",pointL(0),pointL(1),pointL(2));
 							//printf("D %f %f %f \n",D(0),D(1),D(2));
 			//BETA
@@ -71,15 +72,15 @@ double Ray:: RayTriangleInterection(Face &f){
 									return -1.0;
 
 			//T
-							Eigen::Matrix3d M3; M3 << (A-B) ,(A-C),   AminusL;
+							Eigen::Matrix3d M3; M3 << (A-B) ,(A-C), AminusL;
 							M3=M3.transpose().eval();
 							double t = M3.determinant()/ M.determinant();
 							//printf("t %f\n",t);
-							if (t>0.000001){
-									if (t < minTface ){ // checking if its the first visible surface aka the Smallest T value
-										minTface = t;
-										closestFace = f;
-									}
+							if (t>0.000001 && beta>=0 && gamma >= 0.0  && beta + gamma <= 1.0 && t < minTface){
+									// checking if its the first visible surface aka the Smallest T value
+									minTface = t;
+									closestFace = f;
+
 									return t;
 							}
 							else{
