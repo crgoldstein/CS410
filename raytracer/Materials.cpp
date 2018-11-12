@@ -90,21 +90,18 @@ Materials::Materials(string fileName){
 						KdBlue= strtof(matLine[3].c_str(),0);
 					}
 
-					if (matLine[0].compare("Ks")==0){
+					if (matLine[0].compare("Ks") ==0){
 						KsRed= strtof(matLine[1].c_str(),0);
 						KsGreen= strtof(matLine[2].c_str(),0);
 						KsBlue= strtof(matLine[3].c_str(),0);
 					}
 
+
 					if (matLine[0].compare("Ns")==0){
-						phong=strtof(matLine[1].c_str(),0);
+						phong = strtof(matLine[1].c_str(),0);
 					}
 				}
-
-				this->KrRed= 0;
-				this->KrGreen= 0;
-				this->KrBlue= 0;
-
+				KrRed = 1;KrGreen = 1;KrBlue = 1;
 }
 
 

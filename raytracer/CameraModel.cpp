@@ -29,6 +29,7 @@ LightSourcesList = LightS;
 
 		for (int i =  0; i < Driver.size(); i++)
 				   {
+printf("driver at i %s\n ",Driver[i].c_str());
 					vector<string> line;
 					boost::split(line, Driver[i] ,boost::is_any_of(" "));
 
@@ -91,6 +92,8 @@ LightSourcesList = LightS;
 }
 
 Eigen::Vector3d CameraModel :: pixelPt(const int i, const int j){
+	//if( )
+	//printf(" pixelPt (%d, %d)\n",i,j);
     double px = (double)i/(width-1)*(right-left)+left;
 
     double py = (double)j/(height-1)*(bottom-top)+top;
@@ -127,7 +130,7 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 						Kr(1,1)=ray.closestFace.Material.KrGreen;
 						Kr(2,2)=ray.closestFace.Material.KrBlue;
 
-						Refatt =  Kr *Refatt;
+						Refatt =  Kr * Refatt;
 
 						Eigen::Vector3d  NewDir = -1 * ray.Direction;
 						Eigen::Vector3d refR = ((2 * ray.closestFace.normal.dot(NewDir)) * ray.closestFace.normal) - NewDir ;
@@ -170,12 +173,8 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 							refR = refR.normalized().eval();
 							Ray newRay(pnt , refR);
 
-							cout<<"BEFORE  "<<endl;
-							depth=depth-1;
-
-							RAY_CAST(newRay ,Refatt, accumm, depth);
+							RAY_CAST(newRay ,Refatt, accumm, depth-1);
 							return;
-							cout<<"AFTER new ray  "<<endl;
 
 					}
 					else{
@@ -260,21 +259,24 @@ Eigen::Vector3d CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3d &Normal, Mat
 }
 
 vector<vector<ColorTriple> > CameraModel:: Run(){
-
+printf("Run\n height %d width %d \n",height, width);
 	vector<vector<ColorTriple> > FileColor;
 
 	Eigen::Vector3d pixel, Direction;
 
 	for(int x =0; x < height ; x++){
 		vector<ColorTriple> temp;
-		for(int y=0; y <width; y++){// for each pixel in the image to be rendered
+		for(int y=0; y < width; y++){// for each pixel in the image to be rendered
 			       //fire a ray into the scene and determine the first( the smallest  t value) visible surface
 							    // for each pixel hit into each face
-								//printf("[%d,%d]\n ",x ,y);
+								//printf("in run [%d,%d]  ",x ,y);
 								pixel = pixelPt(x,y);
+								//printf("PIXEL %f %f %f \n ",pixel(0),pixel(1),pixel(2));
 								Direction = pixel - EyeV.getVector(); //(pixel point)- eye
-								Ray r(pixel,Direction);
 
+								//printf("Direction %f %f %f \n ",Direction(0),Direction(1),Direction(2));
+								Ray r(pixel,Direction);
+								//printf("Ray %s \n ",r.toString().c_str());
 								Eigen::Vector3d Refatt(1,1,1);
 								double accumm[] = {0,0,0};
 								RAY_CAST(r, Refatt, accumm, recursionLevel);

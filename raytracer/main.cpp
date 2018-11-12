@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
 		 // Set Up Camera model
 		 CameraModel CAMERA(cameraElements,Lighting,backgorundLight,OBJs,sph);
 
-		cout<<"Run "<<endl;
+
 		//CAMERA.testP3();
 		vector<vector<ColorTriple> >  FileColor = CAMERA.Run();
 		ppmFile.write(FileColor);

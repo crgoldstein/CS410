@@ -18,12 +18,13 @@ Face::Face() {
 		//Material= Materials M;
 }
 
-Face::Face(const point &a, const point &B, const point &C, const Materials &M){
+Face::Face(const point &a, const point &B, const point &C, const Materials &M, bool isSmooth ){
 	A=a;
 	this->B=B;
 	this->C=C;
 	calulateNormal();
 	Material=M;
+	smooth = isSmooth;
 }
 
 void Face:: calulateNormal(){

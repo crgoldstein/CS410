@@ -27,6 +27,7 @@ Ray::Ray(const Eigen::Vector3d &P, const Eigen::Vector3d &D) {
 	pointL = P;
 	Direction = D;
 
+
 	minTface =numeric_limits<double>::max();
 	closestFace=Face();
 

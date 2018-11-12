@@ -17,8 +17,8 @@ objFile::objFile(const string Driver) {
 
 		vector<string> results;
 		boost::split(results, Driver,boost::is_any_of(" "));
-		//  0	1	2	3 	4  5  6  7    8      9
-		//model 1.0 1.0 0.0 30 2 0.0 0.0 -15.0 cube_centered.obj
+		//  0	1	2	3 	4  5  6  7    8      9    10
+		//model 1.0 1.0 0.0 30 2 0.0 0.0 -15.0 sharp cube_centered.obj
 
 		double rotate[3] = {strtof((results[1]).c_str(),0), strtof((results[2]).c_str(),0) ,strtof((results[3]).c_str(),0)};
 		double theta= strtof((results[4]).c_str(),0);
@@ -29,12 +29,16 @@ objFile::objFile(const string Driver) {
 		Transforms T(rotate, theta, scale, Transform);
 
 		//Reading OBJ file
-		string Material = ReadOBJ(results[9]);
+		vector<point> Vertiecs;// List of faces
+		if (results[9].compare("smooth") == 0){ smooth = true;}
+		else{smooth = false;}
+		string Material = ReadOBJ(results[10]);
 		//Rotating and Updating the V poitns
 		Eigen::MatrixXd  RST (T.getRST());
 		Eigen::MatrixXd  Vpts(getVpoints());
 	 	Eigen::MatrixXd  RSTPoints(RST*Vpts.transpose());
 	 	setVpoints(RSTPoints);
+	 	MakeVertiecsFromV();
 	 	//Make Face Objects that have points ABC and Materials
 	 	MakeFaces(Material);
 
@@ -117,30 +121,67 @@ void objFile:: MakeFaces(string &MaterialString){
 
 		    vector<string> SlashA;
 			boost::split(SlashA, results[1] ,boost::is_any_of("/"));
-			int A = stoi(SlashA[0]);// string to int
+			int A = stoi(SlashA[0]) -1;// string to int
 
 			vector<string> SlashB;
 			boost::split(SlashB, results[2],boost::is_any_of("/"));
-			int B = stoi(SlashB[0]);
+			int B = stoi(SlashB[0]) -1;
 
 			vector<string> SlashC;
 			boost::split(SlashC, results[3],boost::is_any_of("/"));
-			int C = stoi(SlashC[0]);
+			int C = stoi(SlashC[0]) -1;
 
-		//Make points
+		/*Make points
 		Apoint = MakePointFromV(A);
 		Bpoint = MakePointFromV(B);
 		Cpoint = MakePointFromV(C);
-		Face F(Apoint, Bpoint, Cpoint, M);
+		printf("A %d  Apoint %s\n ", A, Apoint.toString().c_str() );
+
+		printf("A%d  Vertiecs[A] %s \n",A,  Vertiecs[A].toString().c_str() );
+
+		printf("B %d  Bpoint %s\n ", B, Bpoint.toString().c_str() );
+
+		printf("B%d  Vertiecs[B] %s \n",B,  Vertiecs[B].toString().c_str() );
+
+		printf("C %d  Cpoint %s\n ", C, Cpoint.toString().c_str() );
+
+		printf("C%d  Vertiecs[C] %s \n",C,  Vertiecs[C].toString().c_str() );
+		 */
+		Face F(Vertiecs[A],Vertiecs[B],Vertiecs[C], M,smooth);
 
 
 		Faces.push_back(F);
 
 	}
+
+	printf("Faces.size() %d  \n", Faces.size());
+
 }
 
+
+void objFile:: MakeVertiecsFromV(){
+
+
+	printf("v.size() %d  Vertiecs.size() %d\n", v.size(),Vertiecs.size());
+
+	for (int i = 0; i< v.size();i ++){
+		vector<string> results;;
+		boost::split(results, v[i],boost::is_any_of(" "));
+
+		double a = strtof((results[1]).c_str(),0);
+		double b = strtof((results[2]).c_str(),0);
+		double c = strtof((results[3]).c_str(),0);
+
+    	point newPoint(a,b,c);
+    	Vertiecs.push_back(newPoint);
+	}
+
+	printf("v.size() %d  Vertiecs.size() %d \n", v.size(),Vertiecs.size());
+}
+
+
 point objFile:: MakePointFromV(int Index){
-	Index= Index - 1;
+
 	vector<string> results;
 	boost::split(results, v[Index],boost::is_any_of(" "));
 

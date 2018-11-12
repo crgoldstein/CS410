@@ -21,14 +21,14 @@ using namespace std;
 class Face {
 public:
 	Face();
-	Face(const point &a ,const point &B, const point &C, const Materials &M); //??? Wont let me pass by &
+	Face(const point &a ,const point &B, const point &C, const Materials &M, bool isSmooth ); //??? Wont let me pass by &
 	void calulateNormal();
 	Eigen::Vector3d getNormal() ;
 	void setNormal(const Eigen::Vector3d n);
 	virtual ~Face();
 	string toString();
 
-
+	bool smooth;
 	point A;
 	point B;
 	point C;

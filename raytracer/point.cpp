@@ -10,12 +10,15 @@ point::point() {
 	this->x=0;
 	this->y=0;
 	this->z=0;
+	//VerticesFaces = vector<Face>();
 
 }
 point::point( const double X, const double Y, const double Z) {
 	this->x=X;
 	this->y=Y;
 	this->z=Z;
+	//VerticesFaces = vector<Face>();
+
 
 }
 
