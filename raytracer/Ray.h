@@ -37,6 +37,8 @@ public:
 	Eigen::Vector3d Direction;
 
 	double minTface;//
+	double minGamma ;
+	double	minBeta ;
 	Face closestFace;
 
 	double minTsphere;//

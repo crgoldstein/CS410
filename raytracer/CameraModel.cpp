@@ -22,14 +22,38 @@ CameraModel::CameraModel() {}
 
 CameraModel::CameraModel(vector<string> &Driver, vector<LightSource> &LightS,
 						AmbientLight &ambient, vector<objFile> &Objs , vector<Sphere> &Sphs){
-LightSourcesList = LightS;
+	cout<<"\n\n CameraModel Constrcutor! \n"<<endl;
+
+    LightSourcesList = LightS;
 	Ambient = ambient;
 	OBJs = Objs;
-	SPHs =Sphs;
+
+
+	printf("OBJs.size() %d ", OBJs.size());
+		for(objFile object : OBJs){
+
+			cout<<"Faces.size() " <<object.Faces.size() <<endl;
+				for(int i =0; i< object.Faces.size() ; i++){
+					cout<<"Face:"<< i << "\n "<<object.Faces[i].toString()<<endl;
+				};
+
+				cout<<"\n\nVertiecs.size() " <<object.Vertiecs.size() <<endl;
+
+				for(int i =0; i< object.Vertiecs.size() ; i++){
+						cout<< "Vertiecs:"<< i << "\n "<<object.Vertiecs[i].toString()<<endl;
+						cout<<"     VerticesFaces[j]";
+						for(int j =0; j< object.Vertiecs[i].VerticesFaces.size() ; j++){
+							cout<< object.Vertiecs[i].VerticesFaces[j] << " " ;
+						}
+						cout<<"\n ";
+					};
+
+		}
+	SPHs = Sphs;
 
 		for (int i =  0; i < Driver.size(); i++)
 				   {
-printf("driver at i %s\n ",Driver[i].c_str());
+printf("\ndriver at i %s ",Driver[i].c_str());
 					vector<string> line;
 					boost::split(line, Driver[i] ,boost::is_any_of(" "));
 
@@ -206,16 +230,40 @@ bool CameraModel::HitsSomething(Ray &ray){
 		   		}
 			}
 
-	 for(objFile object : OBJs){
-			for(Face face : object.Faces ){
-					if (ray.RayTriangleInterection(face) > 0){// checking if the ray actually hits the face
-						HIT = true;
+
+
+
+			//printf("HIT something OBJs.size() %d ", OBJs.size());
+					for(objFile object : OBJs){
+
+						//cout<<"HIT something Faces.size() " <<object.Faces.size() <<endl;
+							for(Face face : object.Faces){
+									//cout<<"Face:"<< i << "\n "<<face.toString()<<endl;
+								if (ray.RayTriangleInterection(face) > 0){// checking if the ray actually hits the face
+												HIT = true;
+									}
+
+							}
+
+//							cout<<"\n\nHIT something Vertiecs.size() " <<object.Vertiecs.size() <<endl;
+//
+//							for(int i =0; i< object.Vertiecs.size() ; i++){
+//									cout<< "Vertiecs:"<< i << "\n "<<object.Vertiecs[i].toString()<<endl;
+//									cout<<"     VerticesFaces[j]";
+//									for(int j =0; j< object.Vertiecs[i].VerticesFaces.size() ; j++){
+//										cout<< object.Vertiecs[i].VerticesFaces[j] << " " ;
+//									}
+//									cout<<"\n ";
+//								};
+
 					}
-			}
-	 }
+
+
+
 
 	return HIT;
 }
+
 
 Eigen::Vector3d CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3d &Normal, Materials &Mat, Eigen::Vector3d &pnt ){
 
@@ -269,7 +317,7 @@ printf("Run\n height %d width %d \n",height, width);
 		for(int y=0; y < width; y++){// for each pixel in the image to be rendered
 			       //fire a ray into the scene and determine the first( the smallest  t value) visible surface
 							    // for each pixel hit into each face
-								//printf("in run [%d,%d]  ",x ,y);
+								printf("in run [%d,%d] \n",x ,y);
 								pixel = pixelPt(x,y);
 								//printf("PIXEL %f %f %f \n ",pixel(0),pixel(1),pixel(2));
 								Direction = pixel - EyeV.getVector(); //(pixel point)- eye

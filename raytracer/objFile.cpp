@@ -14,7 +14,7 @@
 using namespace std;
 
 objFile::objFile(const string Driver) {
-
+cout<<"objFile constructor"<<endl;
 		vector<string> results;
 		boost::split(results, Driver,boost::is_any_of(" "));
 		//  0	1	2	3 	4  5  6  7    8      9    10
@@ -33,6 +33,7 @@ objFile::objFile(const string Driver) {
 		if (results[9].compare("smooth") == 0){ smooth = true;}
 		else{smooth = false;}
 		string Material = ReadOBJ(results[10]);
+		OBJName=results[10];
 		//Rotating and Updating the V poitns
 		Eigen::MatrixXd  RST (T.getRST());
 		Eigen::MatrixXd  Vpts(getVpoints());
@@ -40,6 +41,7 @@ objFile::objFile(const string Driver) {
 	 	setVpoints(RSTPoints);
 	 	MakeVertiecsFromV();
 	 	//Make Face Objects that have points ABC and Materials
+	 	Faces.reserve(f.size());
 	 	MakeFaces(Material);
 
 }
@@ -112,7 +114,13 @@ void objFile::setVpoints(Eigen::MatrixXd &points) {
 void objFile:: MakeFaces(string &MaterialString){
 	Materials M(MaterialString);
 	point Apoint; point Bpoint; point Cpoint;
-	for(int i =0; i< f.size(); i++){
+	vector<Face> FacesList (f.size());
+	cout<<"f.size()"<<f.size()<<endl;
+	cout<<"Faces.size()"<<Faces.size()<<endl;
+	cout<<"FacesList.size()"<<FacesList.size()<<endl;
+
+	for(int i = 0; i< f.size(); i++){
+		cout<<"face["<<i<<"]"<<endl;
         //0   1    2    3
 		//f 2//1 4//1 1//1
 
@@ -120,49 +128,64 @@ void objFile:: MakeFaces(string &MaterialString){
 		boost::split(results, f[i],boost::is_any_of(" "));
 
 		    vector<string> SlashA;
-			boost::split(SlashA, results[1] ,boost::is_any_of("/"));
+			boost::split(SlashA, results[1], boost::is_any_of("/"));
 			int A = stoi(SlashA[0]) -1;// string to int
 
 			vector<string> SlashB;
-			boost::split(SlashB, results[2],boost::is_any_of("/"));
+			boost::split(SlashB, results[2], boost::is_any_of("/"));
 			int B = stoi(SlashB[0]) -1;
 
 			vector<string> SlashC;
-			boost::split(SlashC, results[3],boost::is_any_of("/"));
+			boost::split(SlashC, results[3], boost::is_any_of("/"));
 			int C = stoi(SlashC[0]) -1;
 
-		/*Make points
-		Apoint = MakePointFromV(A);
-		Bpoint = MakePointFromV(B);
-		Cpoint = MakePointFromV(C);
-		printf("A %d  Apoint %s\n ", A, Apoint.toString().c_str() );
+		//Make points
+//		printf("A%d  Vertiecs[A] %s \n",A,  Vertiecs[A].toString().c_str() );
+//		printf("B%d  Vertiecs[B] %s \n",B,  Vertiecs[B].toString().c_str() );
+//		printf("C%d  Vertiecs[C] %s \n",C,  Vertiecs[C].toString().c_str() );
 
-		printf("A%d  Vertiecs[A] %s \n",A,  Vertiecs[A].toString().c_str() );
+		Vertiecs[A].AddFace(i);
+		Vertiecs[B].AddFace(i);
+		Vertiecs[C].AddFace(i);
 
-		printf("B %d  Bpoint %s\n ", B, Bpoint.toString().c_str() );
+		Face face1(Vertiecs[A],Vertiecs[B],Vertiecs[C], M, this);
 
-		printf("B%d  Vertiecs[B] %s \n",B,  Vertiecs[B].toString().c_str() );
-
-		printf("C %d  Cpoint %s\n ", C, Cpoint.toString().c_str() );
-
-		printf("C%d  Vertiecs[C] %s \n",C,  Vertiecs[C].toString().c_str() );
-		 */
-		Face F(Vertiecs[A],Vertiecs[B],Vertiecs[C], M,smooth);
-
-
-		Faces.push_back(F);
+//		printf("Face F toString \n %s\n",  face1.toString().c_str() );
+//
+//		printf("A%d  Vertiecs[A] %s \n",A,  Vertiecs[A].toString().c_str() );
+//		printf("B%d  Vertiecs[B] %s \n",B,  Vertiecs[B].toString().c_str() );
+//		printf("C%d  Vertiecs[C] %s \n",C,  Vertiecs[C].toString().c_str() );
+//	    printf("Face F toString \n %s\n",  face1.toString().c_str() );
+		Faces.push_back(face1);
 
 	}
+//
+//	cout<<"OBJFILE\nFaces.size() " <<Faces.size() <<endl;
+//	for(int i =0; i< Faces.size() ; i++){
+//		cout<<"Face:"<< i << "\n "<<Faces[i].toString()<<endl;
+//	};
+//
+//	cout<<"\n\nVertiecs.size() " <<Vertiecs.size() <<endl;
+//
+//	for(int i =0; i< Vertiecs.size() ; i++){
+//			cout<< "Vertiecs:"<< i << "\n "<<Vertiecs[i].toString()<<endl;
+//			cout<<"     VerticesFaces[j]";
+//			for(int j =0; j< Vertiecs[i].VerticesFaces.size() ; j++){
+//				cout<< Vertiecs[i].VerticesFaces[j] << " " ;
+//			}
+//			cout<<"\n ";
+//		};
 
-	printf("Faces.size() %d  \n", Faces.size());
 
 }
 
 
+string objFile:: toString(){
+	return "ObjFile : "+ OBJName;
+
+}
+
 void objFile:: MakeVertiecsFromV(){
-
-
-	printf("v.size() %d  Vertiecs.size() %d\n", v.size(),Vertiecs.size());
 
 	for (int i = 0; i< v.size();i ++){
 		vector<string> results;;
@@ -172,27 +195,13 @@ void objFile:: MakeVertiecsFromV(){
 		double b = strtof((results[2]).c_str(),0);
 		double c = strtof((results[3]).c_str(),0);
 
-    	point newPoint(a,b,c);
+    	point newPoint(a,b,c,i);
     	Vertiecs.push_back(newPoint);
 	}
 
-	printf("v.size() %d  Vertiecs.size() %d \n", v.size(),Vertiecs.size());
+	cout<<"v.size() "<<v.size()<<" Vertiecs.size()  "<<Vertiecs.size() <<endl;
 }
 
-
-point objFile:: MakePointFromV(int Index){
-
-	vector<string> results;
-	boost::split(results, v[Index],boost::is_any_of(" "));
-
-	double a = strtof((results[1]).c_str(),0);
-	double b = strtof((results[2]).c_str(),0);
-	double c = strtof((results[3]).c_str(),0);
-
-    point newPoint(a,b,c);
-    return newPoint;
-
-}
 
 
 objFile::~objFile() {

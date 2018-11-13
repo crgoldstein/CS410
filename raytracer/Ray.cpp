@@ -15,6 +15,8 @@ Ray::Ray(){
 		Direction  << 0,0,0;
 
 		minTface=numeric_limits<double>::max();
+		minGamma = numeric_limits<double>::max();
+		minBeta = numeric_limits<double>::max();
 		closestFace=Face();
 
 		minTsphere =numeric_limits<double>::max();
@@ -28,7 +30,9 @@ Ray::Ray(const Eigen::Vector3d &P, const Eigen::Vector3d &D) {
 	Direction = D;
 
 
-	minTface =numeric_limits<double>::max();
+	minTface = numeric_limits<double>::max();
+	minGamma = numeric_limits<double>::max();
+	minBeta = numeric_limits<double>::max();
 	closestFace=Face();
 
 	minTsphere = numeric_limits<double>::max();
@@ -80,6 +84,8 @@ double Ray:: RayTriangleInterection(Face &f){
 							if (t>0.000001 && beta>=0 && gamma >= 0.0  && beta + gamma <= 1.0 && t < minTface){
 									// checking if its the first visible surface aka the Smallest T value
 									minTface = t;
+									minGamma = gamma;
+									minBeta = beta;
 									closestFace = f;
 
 									return t;

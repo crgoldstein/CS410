@@ -5,20 +5,29 @@
  *      Author: clairegoldstein
  */
 #include "point.h"
+#include "Face.h"
 
 point::point() {
-	this->x=0;
-	this->y=0;
-	this->z=0;
-	//VerticesFaces = vector<Face>();
+	this->x = 0;
+	this->y = 0;
+	this->z = 0;
+	this->index =-1;
+	VerticesFaces = vector<int>();
 
 }
-point::point( const double X, const double Y, const double Z) {
-	this->x=X;
-	this->y=Y;
-	this->z=Z;
-	//VerticesFaces = vector<Face>();
-
+point::point( const double X, const double Y, const double Z){
+		this->x = X;
+		this->y = Y;
+		this->z = Z;
+		VerticesFaces = vector<int>();
+		this->index =-1;
+}
+point::point( const double X, const double Y, const double Z,const double Index) {
+	this->x = X;
+	this->y = Y;
+	this->z = Z;
+	VerticesFaces = vector<int>();
+	this->index =Index;
 
 }
 
@@ -43,8 +52,13 @@ Eigen::Vector3d point::getVector(){
 	return point;
 }
 
+void point:: AddFace(int i){
+	VerticesFaces.push_back(i);
+}
+
 string point:: toString(){
-	return "X "+ to_string(this->x) + ", Y "+ to_string(this->y) + ", Z "+ to_string(this->z);
+	return "index "+ to_string(this->index)+"X "+ to_string(this->x) + ", Y "+ to_string(this->y) + ", Z "+ to_string(this->z)
+			+ ", VerticesFaces.size() "+to_string(VerticesFaces.size());
 }
 
 point::~point() {

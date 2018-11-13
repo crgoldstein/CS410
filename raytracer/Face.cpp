@@ -6,25 +6,25 @@
  */
 
 #include "Face.h"
-
+#include "objFile.h"
 
 
 Face::Face() {
-	// TODO Auto-generated constructor stub
-	    A=point();
-		B=point();
-		C=point();
+	// TODO A
+	    A = point();
+		B = point();
+		C = point();
 		calulateNormal();
-		//Material= Materials M;
+
 }
 
-Face::Face(const point &a, const point &B, const point &C, const Materials &M, bool isSmooth ){
-	A=a;
-	this->B=B;
-	this->C=C;
+Face::Face(const point &a,  const point &B, const point &C, const Materials &M, objFile *Modle ){
+	this->A = a;
+	this->B = B;
+	this->C = C;
 	calulateNormal();
-	Material=M;
-	smooth = isSmooth;
+	Material = M;
+	modle = Modle;
 }
 
 void Face:: calulateNormal(){
@@ -47,8 +47,8 @@ void Face::setNormal(const Eigen::Vector3d  n){
 
 string Face::toString(){
 	return " point A: "+ A.toString()+"\n point B: "+ B.toString() +"\n point C: "+C.toString()
-			+"\n Normal "+ to_string(normal(0))+ " "+ to_string(normal(1))+ " "+ to_string(normal(2));
-			//+ "\n 	Materials :" + Material.toString();
+			+"\n Normal "+ to_string(normal(0))+ " "+ to_string(normal(1))+ " "+ to_string(normal(2))
+			+"Model "+ modle->toString() ;//+ "\n 	Materials :" + Material.toString();
 }
 
 

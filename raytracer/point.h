@@ -13,7 +13,6 @@
 #include <string>
 #include <Eigen/Dense>
 #include <vector>
-//#include "Face.h"
 
 using namespace std;
 
@@ -21,21 +20,22 @@ class point {
 
 public:
 	point();
-
-	point(const double X, const double Y, const double Z);
-	virtual ~point();
-	Eigen::Vector3d getVector();
-	//vector<Face> VerticesFaces;
+	point(const double X, const double Y, const double Z, const double Index);
+	point( const double X, const double Y, const double Z);
 	double getX();
 	double getY();
 	double getZ();
+	Eigen::Vector3d getVector();
+	vector<int> VerticesFaces;
+	void AddFace(int);
+
 	string toString();
 	point Vector2Point(const Eigen::Vector3d &v);
 
-
+	virtual ~point();
 
 private:
-	double x,y,z;
+	double x,y,z,index;
 
 };
 

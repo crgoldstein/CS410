@@ -1,5 +1,5 @@
-CC = g++ 
-CFLAGS = -Wall -c -O3 -I ./eigen-eigen-b9cd8366d4e8
+CC = g++ -std=c++11
+CFLAGS = -Wall -c -g -I  ./eigen-eigen-b9cd8366d4e8  
 LFLAGS = -Wall 
 
 OBJS = main.o Transforms.o objFile.o CameraModel.o AmbientLight.o LightSource.o point.o Face.o Materials.o Ray.o ColorTriple.o PPMFile.o Sphere.o

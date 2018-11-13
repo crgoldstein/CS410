@@ -25,16 +25,16 @@ public:
 	objFile(const string DriverFile);
 	objFile();
 	virtual ~objFile();
-	vector<Face> Faces;// List of faces
-	vector<point> Vertiecs;// List of faces
+	vector<Face> Faces;     // List of faces
+	vector<point> Vertiecs; // List of faces
 	bool smooth;
+	string toString();
 
 private:
 	string ReadOBJ(const string file);
 	Eigen::MatrixXd getVpoints();
 	void setVpoints(Eigen::MatrixXd &points) ;
 	void MakeFaces(string &MaterialString);
-	point MakePointFromV(int Index);
 	void MakeVertiecsFromV();
 
 	string DriverName;
