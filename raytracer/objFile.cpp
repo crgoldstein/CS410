@@ -13,6 +13,11 @@
 
 using namespace std;
 
+objFile::objFile(){
+		 smooth = false;
+		 OBJName ="Null";
+}
+
 objFile::objFile(const string Driver) {
 cout<<"objFile constructor"<<endl;
 		vector<string> results;
@@ -30,10 +35,16 @@ cout<<"objFile constructor"<<endl;
 
 		//Reading OBJ file
 		vector<point> Vertiecs;// List of faces
-		if (results[9].compare("smooth") == 0){ smooth = true;}
+		cout<<"results[9] " <<results[9] <<endl;
+
+		cout<<"results[9].compare(smooth)  " <<results[9].compare("smooth")  <<endl;
+		cout<<"smooth " <<smooth <<endl;
+ 		if (results[9].compare("smooth") == 0){ smooth = true;}
 		else{smooth = false;}
+ 		cout<<"smooth " <<smooth <<endl;
+
 		string Material = ReadOBJ(results[10]);
-		OBJName=results[10];
+		OBJName = results[10];
 		//Rotating and Updating the V poitns
 		Eigen::MatrixXd  RST (T.getRST());
 		Eigen::MatrixXd  Vpts(getVpoints());
@@ -120,7 +131,7 @@ void objFile:: MakeFaces(string &MaterialString){
 	cout<<"FacesList.size()"<<FacesList.size()<<endl;
 
 	for(int i = 0; i< f.size(); i++){
-		cout<<"face["<<i<<"]"<<endl;
+		//cout<<"face["<<i<<"]"<<endl;
         //0   1    2    3
 		//f 2//1 4//1 1//1
 
@@ -160,10 +171,12 @@ void objFile:: MakeFaces(string &MaterialString){
 
 	}
 //
-//	cout<<"OBJFILE\nFaces.size() " <<Faces.size() <<endl;
-//	for(int i =0; i< Faces.size() ; i++){
-//		cout<<"Face:"<< i << "\n "<<Faces[i].toString()<<endl;
-//	};
+	cout<<"OBJFILE\nFaces.size() " <<Faces.size() <<endl;
+	for(int i =0; i< Faces.size()/10 ; i++){
+		cout<<"Face:"<< i << "\n "<<Faces[i].toString()<<endl;
+
+		cout<<"Face:"<< i << "\n Faces[i].modle->smooth  "<<Faces[i].modle->smooth<<endl;
+	};
 //
 //	cout<<"\n\nVertiecs.size() " <<Vertiecs.size() <<endl;
 //
@@ -181,7 +194,7 @@ void objFile:: MakeFaces(string &MaterialString){
 
 
 string objFile:: toString(){
-	return "ObjFile : "+ OBJName;
+	return "\nObjFile : "+ OBJName + " Smooth "+ to_string(smooth)+ "  Faces.size  "+ to_string(Faces.size())+ " Vertiecs  "+ to_string(Vertiecs.size());
 
 }
 

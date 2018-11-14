@@ -15,6 +15,7 @@
 #include "point.h"
 #include "Face.h"
 #include "Sphere.h"
+#include "objFile.h"
 #include <string>
 
 using namespace std;
@@ -29,6 +30,7 @@ public:
 
 	double RayTriangleInterection(Face &f);
 	double RaySphereInterection(Sphere &S);
+	bool RayModleInterection(objFile &M);
 
 
 	string toString();
@@ -40,6 +42,7 @@ public:
 	double minGamma ;
 	double	minBeta ;
 	Face closestFace;
+	objFile closestModel;
 
 	double minTsphere;//
 	Sphere ClosestSphere;

@@ -33,8 +33,10 @@ CameraModel::CameraModel(vector<string> &Driver, vector<LightSource> &LightS,
 //		for(objFile object : OBJs){
 //
 //			cout<<"Faces.size() " <<object.Faces.size() <<endl;
-//				for(int i =0; i< object.Faces.size() ; i++){
+//				for(int i =0; i< object.Faces.size()/10 ; i++){
 //					cout<<"Face:"<< i << "\n "<<object.Faces[i].toString()<<endl;
+//
+//					cout<<"Face:"<< i << "\n object.Faces[i].modle->smooth  "<<object.Faces[i].modle->smooth<<endl;
 //				};
 //
 //				cout<<"\n\nVertiecs.size() " <<object.Vertiecs.size() <<endl;
@@ -47,15 +49,14 @@ CameraModel::CameraModel(vector<string> &Driver, vector<LightSource> &LightS,
 //						}
 //						cout<<"\n ";
 //					};
-//
-//		}
+//  }
 	SPHs = Sphs;
-for( string a : Driver){
-	cout<<a<<endl;
-}
-		for (int i =  0; i < Driver.size(); i++)
-				   {
-printf("\ndriver at i %s ",Driver[i].c_str());
+
+		for (int i =  0; i < Driver.size(); i++){
+
+
+			cout<<Driver[i]<<endl;
+
 					vector<string> line;
 					boost::split(line, Driver[i] ,boost::is_any_of(" "));
 
@@ -134,9 +135,9 @@ Eigen::Vector3d CameraModel :: pixelPt(const int i, const int j){
 
 Eigen::Vector3d CameraModel:: SmoothSurface(Ray &ray){
 
-	Eigen::Vector3d NormalA = getAverageNormal(ray.closestFace.normal,ray.closestFace.A.VerticesFaces,ray.closestFace.modle->Faces);
-	Eigen::Vector3d NormalB = getAverageNormal(ray.closestFace.normal,ray.closestFace.B.VerticesFaces,ray.closestFace.modle->Faces);
-	Eigen::Vector3d NormalC = getAverageNormal(ray.closestFace.normal,ray.closestFace.C.VerticesFaces,ray.closestFace.modle->Faces);
+	Eigen::Vector3d NormalA = getAverageNormal(ray.closestFace.normal,ray.closestFace.A.VerticesFaces,ray.closestModel.Faces);
+	Eigen::Vector3d NormalB = getAverageNormal(ray.closestFace.normal,ray.closestFace.B.VerticesFaces,ray.closestModel.Faces);
+	Eigen::Vector3d NormalC = getAverageNormal(ray.closestFace.normal,ray.closestFace.C.VerticesFaces,ray.closestModel.Faces);
 	// Ni = (1 - beta - gamma)NormalA + beta*NormalB  + gamma*NormalC
 
 	return (1 - ray.minBeta - ray.minGamma)*(NormalA + ray.minBeta*NormalB  + ray.minGamma*NormalC);
@@ -163,9 +164,10 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 	if (HitsSomething(ray)){
 
 		if (ray.minTface < ray.minTsphere){ //Triangle is Closer
-
+			cout<<"hit Triangle"<<endl;
 				Eigen::Vector3d  TriangleNormal(ray.closestFace.normal);
-				if(ray.closestFace.modle->smooth){
+				cout<<"ray.closestModel.smooth "<<ray.closestModel.smooth<<endl;
+				if(ray.closestModel.smooth){
 					TriangleNormal = SmoothSurface(ray);
 				}
 				Eigen::Vector3d pnt(ray.pointL + ray.minTface * ray.Direction.normalized());
@@ -254,20 +256,18 @@ bool CameraModel::HitsSomething(Ray &ray){
 		   		}
 			}
 
-
-
-
 			//printf("HIT something OBJs.size() %d ", OBJs.size());
 					for(objFile object : OBJs){
-
+							HIT = ray.RayModleInterection(object);
+						}
 						//cout<<"HIT something Faces.size() " <<object.Faces.size() <<endl;
-							for(Face face : object.Faces){
-									//cout<<"Face:"<< i << "\n "<<face.toString()<<endl;
-								if (ray.RayTriangleInterection(face) > 0){// checking if the ray actually hits the face
-												HIT = true;
-									}
+//							for(Face face : object.Faces){
+//									//cout<<"Face:"<< i << "\n "<<face.toString()<<endl;
+//								if (ray.RayTriangleInterection(face) > 0){// checking if the ray actually hits the face
+//												HIT = true;
+//									}
 
-							}
+
 
 //							cout<<"\n\nHIT something Vertiecs.size() " <<object.Vertiecs.size() <<endl;
 //
@@ -279,10 +279,6 @@ bool CameraModel::HitsSomething(Ray &ray){
 //									}
 //									cout<<"\n ";
 //								};
-
-					}
-
-
 
 
 	return HIT;
@@ -341,7 +337,7 @@ printf("Run\n height %d width %d \n",height, width);
 		for(int y=0; y < width; y++){// for each pixel in the image to be rendered
 			       //fire a ray into the scene and determine the first( the smallest  t value) visible surface
 							    // for each pixel hit into each face
-								printf("in run [%d,%d] \n",x ,y);
+								//printf("in run [%d,%d] \n",x ,y);
 								pixel = pixelPt(x,y);
 								//printf("PIXEL %f %f %f \n ",pixel(0),pixel(1),pixel(2));
 								Direction = pixel - EyeV.getVector(); //(pixel point)- eye
