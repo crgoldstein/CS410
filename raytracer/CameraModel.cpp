@@ -29,28 +29,30 @@ CameraModel::CameraModel(vector<string> &Driver, vector<LightSource> &LightS,
 	OBJs = Objs;
 
 
-	printf("OBJs.size() %d ", OBJs.size());
-		for(objFile object : OBJs){
-
-			cout<<"Faces.size() " <<object.Faces.size() <<endl;
-				for(int i =0; i< object.Faces.size() ; i++){
-					cout<<"Face:"<< i << "\n "<<object.Faces[i].toString()<<endl;
-				};
-
-				cout<<"\n\nVertiecs.size() " <<object.Vertiecs.size() <<endl;
-
-				for(int i =0; i< object.Vertiecs.size() ; i++){
-						cout<< "Vertiecs:"<< i << "\n "<<object.Vertiecs[i].toString()<<endl;
-						cout<<"     VerticesFaces[j]";
-						for(int j =0; j< object.Vertiecs[i].VerticesFaces.size() ; j++){
-							cout<< object.Vertiecs[i].VerticesFaces[j] << " " ;
-						}
-						cout<<"\n ";
-					};
-
-		}
+//	printf("OBJs.size() %d ", OBJs.size());
+//		for(objFile object : OBJs){
+//
+//			cout<<"Faces.size() " <<object.Faces.size() <<endl;
+//				for(int i =0; i< object.Faces.size() ; i++){
+//					cout<<"Face:"<< i << "\n "<<object.Faces[i].toString()<<endl;
+//				};
+//
+//				cout<<"\n\nVertiecs.size() " <<object.Vertiecs.size() <<endl;
+//
+//				for(int i =0; i< object.Vertiecs.size() ; i++){
+//						cout<< "Vertiecs:"<< i << "\n "<<object.Vertiecs[i].toString()<<endl;
+//						cout<<"     VerticesFaces[j]";
+//						for(int j =0; j< object.Vertiecs[i].VerticesFaces.size() ; j++){
+//							cout<< object.Vertiecs[i].VerticesFaces[j] << " " ;
+//						}
+//						cout<<"\n ";
+//					};
+//
+//		}
 	SPHs = Sphs;
-
+for( string a : Driver){
+	cout<<a<<endl;
+}
 		for (int i =  0; i < Driver.size(); i++)
 				   {
 printf("\ndriver at i %s ",Driver[i].c_str());
@@ -64,13 +66,13 @@ printf("\ndriver at i %s ",Driver[i].c_str());
 							double c = stof((line[3]).c_str(),0);
 							point X(a, b, c);
 							if (line[0].compare("eye") == 0){
-								 EyeV=X;
+								 EyeV = X;
 							}
 							else if(line[0].compare("look") == 0){
-								LookV=X;
+								LookV = X;
 							}
 							else if(line[0].compare("up")==0){
-								UpV=X;
+								UpV = X;
 							}
 
 					}
@@ -94,7 +96,7 @@ printf("\ndriver at i %s ",Driver[i].c_str());
 						height = stoi(line[2]);
 
 					}
-					else if (line[0].compare("recursionLevel")==0){
+					else if (line[0].compare("recursionLevel") == 0){
 						recursionLevel = stoi(line[1]);
 					}
 				}// end of driver for loop
@@ -113,6 +115,7 @@ printf("\ndriver at i %s ",Driver[i].c_str());
 				Uv = point(uv(0),uv(1),uv(2));
 				Vv = point(vv(0),vv(1),vv(2));
 
+
 }
 
 Eigen::Vector3d CameraModel :: pixelPt(const int i, const int j){
@@ -129,6 +132,30 @@ Eigen::Vector3d CameraModel :: pixelPt(const int i, const int j){
 
 }
 
+Eigen::Vector3d CameraModel:: SmoothSurface(Ray &ray){
+
+	Eigen::Vector3d NormalA = getAverageNormal(ray.closestFace.normal,ray.closestFace.A.VerticesFaces,ray.closestFace.modle->Faces);
+	Eigen::Vector3d NormalB = getAverageNormal(ray.closestFace.normal,ray.closestFace.B.VerticesFaces,ray.closestFace.modle->Faces);
+	Eigen::Vector3d NormalC = getAverageNormal(ray.closestFace.normal,ray.closestFace.C.VerticesFaces,ray.closestFace.modle->Faces);
+	// Ni = (1 - beta - gamma)NormalA + beta*NormalB  + gamma*NormalC
+
+	return (1 - ray.minBeta - ray.minGamma)*(NormalA + ray.minBeta*NormalB  + ray.minGamma*NormalC);
+}
+
+Eigen::Vector3d CameraModel:: getAverageNormal( Eigen::Vector3d  &Normal, vector<int> &VerticesFaces, vector<Face> &Faces){
+	Eigen::Vector3d AverageNormal(0,0,0);
+	int count = 0;
+
+	   for(int i : VerticesFaces){
+			if(Normal.dot(Faces[i].normal) < 22.5)
+			{
+				AverageNormal += Faces[i].normal;
+				count++;
+			}
+		}
+	return AverageNormal/count;
+}
+
 void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, int depth){
 	Eigen::Vector3d color;
 	//printf("HIT something Recrisive depth %d > accumm is [ %f , %f , %f] \n",depth,accumm[0],accumm[1],accumm[2]);
@@ -136,13 +163,14 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 	if (HitsSomething(ray)){
 
 		if (ray.minTface < ray.minTsphere){ //Triangle is Closer
+
+				Eigen::Vector3d  TriangleNormal(ray.closestFace.normal);
+				if(ray.closestFace.modle->smooth){
+					TriangleNormal = SmoothSurface(ray);
+				}
 				Eigen::Vector3d pnt(ray.pointL + ray.minTface * ray.Direction.normalized());
 
-				if (ray.Direction.normalized().dot(ray.closestFace.normal) > 0){// normal is pointing to the inside of the object
-					ray.closestFace.setNormal(-ray.closestFace.normal);// Flip the normal;
-				}
-
-				color = COLOR_PIXEL(ray, ray.closestFace.normal, ray.closestFace.Material, pnt);
+				color = COLOR_PIXEL(ray, TriangleNormal, ray.closestFace.Material, pnt);
 				accumm[0] += color(0) * Refatt(0) ;//red
 				accumm[1] += color(1) * Refatt(1) ;//green
 				accumm[2] += color(2) * Refatt(2) ;//blue
@@ -157,11 +185,11 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 						Refatt =  Kr * Refatt;
 
 						Eigen::Vector3d  NewDir = -1 * ray.Direction;
-						Eigen::Vector3d refR = ((2 * ray.closestFace.normal.dot(NewDir)) * ray.closestFace.normal) - NewDir ;
+						Eigen::Vector3d refR = ((2 * TriangleNormal.dot(NewDir)) * TriangleNormal) - NewDir ;
 						refR= refR.normalized();
 						Ray newRay(pnt , refR);
 
-						RAY_CAST(newRay , Refatt, accumm, depth-1) ;
+						RAY_CAST(newRay , Refatt, accumm, depth-1);
 					   }
 					else{
 						return ;
@@ -172,10 +200,6 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 				Eigen::Vector3d pnt(ray.pointL + ray.minTsphere * ray.Direction.normalized());
 				Eigen::Vector3d r(ray.ClosestSphere.Center.getVector());
 				Eigen::Vector3d SphereNormal(pnt - r); SphereNormal = SphereNormal.normalized();
-
-				if (ray.Direction.normalized().dot(SphereNormal) > 0){// normal is pointing to the inside of the object
-					SphereNormal =  - SphereNormal; // Flip the normal
-				}
 
 				color = COLOR_PIXEL(ray, SphereNormal, ray.ClosestSphere.Material, pnt);
 				accumm[0] += color(0) * Refatt(0) ;//red

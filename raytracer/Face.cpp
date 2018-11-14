@@ -29,8 +29,8 @@ Face::Face(const point &a,  const point &B, const point &C, const Materials &M, 
 
 void Face:: calulateNormal(){
 
-	Eigen::Vector3d AB(B.getVector() - A.getVector());
-	Eigen::Vector3d AC(C.getVector() - A.getVector());
+	Eigen::Vector3d AB(A.getVector() - B.getVector());
+	Eigen::Vector3d AC(A.getVector() - C.getVector());
 	Eigen::Vector3d Normal = AB.cross(AC);
 	Normal = Normal.normalized().eval();
 	normal= Normal;

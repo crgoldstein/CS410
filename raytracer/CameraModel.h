@@ -39,9 +39,12 @@ public:
 private:
 	Eigen::Vector3d pixelPt(const int i,const int j);
 
-	void RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, int depth);///why can't i pass by referance
+	void RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, int depth);
 	Eigen::Vector3d  COLOR_PIXEL (Ray &ray, Eigen::Vector3d &Normal, Materials &Mat, Eigen::Vector3d &pnt );
 	bool HitsSomething(Ray &ray);
+	Eigen::Vector3d SmoothSurface(Ray &ray);
+
+	Eigen::Vector3d getAverageNormal( Eigen::Vector3d  &Normal , vector<int> &VerticesFaces, vector<Face> &Faces);
 
 // Class Variables
 	int recursionLevel;
