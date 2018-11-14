@@ -1,0 +1,13 @@
+eye 0 75 100
+look 0 -2 0
+up 0 1 0
+d 30
+bounds -2 -2 2 2
+res 512 512
+recursionLevel 0
+ambient 0.2 0.2 0.2
+light 20 60 50 1 0.7 0.2 0.3
+#light -50 -10 50 1 0.3 0.2 0.7
+#
+model 0.0 1.0 0.0 -60 5 2 3.0 4 smooth torus.obj
+#model 1.0 1.3 0.0 45 5 -2 0.0 4 torus.obj

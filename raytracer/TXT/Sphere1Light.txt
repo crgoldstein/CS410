@@ -1,0 +1,12 @@
+eye 0 0 60
+look 0 0 10
+up 0 1 0
+d 10
+bounds -2 -2 2 2
+res 512 512
+recursionLevel 3
+ambient 0.2 0.2 0.2
+# Light
+light 100 10 80 1 1.0 .3 .3
+#Sphere from the sageMath
+sphere 0 0 -10 10 0.2 0.2 0.2 0.1 0.1 0.7 0.5 0.5 0.5 1.0 1.0 1.0
