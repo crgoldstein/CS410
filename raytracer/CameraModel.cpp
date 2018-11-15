@@ -128,7 +128,7 @@ Eigen::Vector3d CameraModel:: getAverageNormal( Eigen::Vector3d  &Normal, vector
 	int count = 0;
 
 	   for(int i : VerticesFaces){
-			if(Normal.dot(Faces[i].normal) < 22.5)
+			if(Normal.dot(Faces[i].normal) > (0.92387953251))// the cosine of 22.5 = 0.92387953251
 			{
 				AverageNormal += Faces[i].normal;
 				count++;
@@ -209,7 +209,7 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 
 					}
 					else{
-						return ;
+						return;
 					}
 
 			}
