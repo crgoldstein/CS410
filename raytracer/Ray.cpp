@@ -46,7 +46,7 @@ double Ray:: RayTriangleInterection(Face &f){
 		//the original M matrix and then three derived by substituting Y into successive columns.
 	  Eigen::Vector3d D = Direction;
 
-			    			D=D.normalized().eval();
+			    		D=D.normalized().eval();
 							Eigen::Vector3d A(f.A.getVector());
 							Eigen::Vector3d B(f.B.getVector());
 							Eigen::Vector3d C(f.C.getVector());

@@ -166,9 +166,6 @@ void objFile:: MakeFaces(string &MaterialString){
 //
 	// cout<<"OBJFILE\nFaces.size() " <<Faces.size() <<endl;
 	// 	cout<<"Face:"<< Faces.size() -1 <<"TO String()\n"<<Faces[Faces.size() -1].toString()<<endl;
-
-
-
 }
 
 

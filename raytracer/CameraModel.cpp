@@ -190,6 +190,7 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 
 
 				//Recrisive
+				cout<<"depth "<<depth<<endl;
 					if (depth > 0){
 
 							Eigen::MatrixXd Kr = Eigen::MatrixXd::Identity(3, 3);
