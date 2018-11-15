@@ -32,7 +32,8 @@ CameraModel::CameraModel(vector<string> &Driver, vector<LightSource> &LightS,
 //	printf("OBJs.size() %d ", OBJs.size());
 	for(objFile object : OBJs){
 		cout<<"Face: "<< object.Faces.size() -1<<" to string of \n "<<object.Faces[object.Faces.size() -1].toString()<<endl;
- 		cout<<"\n object toString "<< object.toString()<<endl;;
+ 		cout<<"\n object toString "<< object.toString()<<endl;
+
 
 	}
 //
@@ -138,16 +139,25 @@ Eigen::Vector3d CameraModel :: pixelPt(const int i, const int j){
 }
 
 Eigen::Vector3d CameraModel:: SmoothSurface(Ray &ray){
+cout<<"SmoothSurface"<<endl;
+	// objFile CorrectModle;
+	// 	for(objFile object : OBJs){
+	// 		cout<<"		ray.closestFace.compare(object.FacesList[ray.closestFace.index])"<<ray.closestFace.compare(object.Faces[ray.closestFace.FaceIndex])<<endl;
+	// 			if(ray.closestFace.compare(object.Faces[ray.closestFace.FaceIndex]) == 0){
+	// 				CorrectModle = object;
+	// 				break;
+	// 			}
+	// 	}
 
-	Eigen::Vector3d NormalA = getAverageNormal(ray.closestFace.normal,ray.closestFace.A.VerticesFaces,ray.closestModel.Faces);
-	Eigen::Vector3d NormalB = getAverageNormal(ray.closestFace.normal,ray.closestFace.B.VerticesFaces,ray.closestModel.Faces);
-	Eigen::Vector3d NormalC = getAverageNormal(ray.closestFace.normal,ray.closestFace.C.VerticesFaces,ray.closestModel.Faces);
+	Eigen::Vector3d NormalA = getAverageNormal(ray.closestFace.normal,ray.closestFace.A.VerticesFaces,OBJs[ray.closestFace.OBJindex].Faces);
+	Eigen::Vector3d NormalB = getAverageNormal(ray.closestFace.normal,ray.closestFace.B.VerticesFaces,OBJs[ray.closestFace.OBJindex].Faces);
+	Eigen::Vector3d NormalC = getAverageNormal(ray.closestFace.normal,ray.closestFace.C.VerticesFaces,OBJs[ray.closestFace.OBJindex].Faces);
 	// Ni = (1 - beta - gamma)NormalA + beta*NormalB  + gamma*NormalC
-
-	return (1 - ray.minBeta - ray.minGamma)*(NormalA + ray.minBeta*NormalB  + ray.minGamma*NormalC);
+	return (1 - ray.minBeta - ray.minGamma)*(NormalA) + ray.minBeta*NormalB  + ray.minGamma*NormalC;
 }
 
 Eigen::Vector3d CameraModel:: getAverageNormal( Eigen::Vector3d  &Normal, vector<int> &VerticesFaces, vector<Face> &Faces){
+cout<<"getAverageNormal "<<endl;
 	Eigen::Vector3d AverageNormal(0,0,0);
 	int count = 0;
 
@@ -168,12 +178,16 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 	if (HitsSomething(ray)){
 
 		if (ray.minTface < ray.minTsphere){ //Triangle is Closer
-			cout<<"hit Triangle"<<endl;
+			  cout<<"hit Triangle"<<endl;
 				Eigen::Vector3d  TriangleNormal(ray.closestFace.normal);
-				cout<<"ray.closestModel.smooth "<<ray.closestModel.smooth<<endl;
+
+
+				cout<<"ray.closestFace.smooth "<<ray.closestFace.smooth<<endl;
+
 				if(ray.closestFace.smooth){
 					TriangleNormal = SmoothSurface(ray);
 				}
+
 				Eigen::Vector3d pnt(ray.pointL + ray.minTface * ray.Direction.normalized());
 
 				color = COLOR_PIXEL(ray, TriangleNormal, ray.closestFace.Material, pnt);
@@ -260,31 +274,13 @@ bool CameraModel::HitsSomething(Ray &ray){
 		   		}
 			}
 
-			//printf("HIT something OBJs.size() %d ", OBJs.size());
-					for(objFile object : OBJs){
-							HIT = ray.RayModleInterection(object);
-						}
-						//cout<<"HIT something Faces.size() " <<object.Faces.size() <<endl;
-//							for(Face face : object.Faces){
-//									//cout<<"Face:"<< i << "\n "<<face.toString()<<endl;
-//								if (ray.RayTriangleInterection(face) > 0){// checking if the ray actually hits the face
-//												HIT = true;
-//									}
-
-
-
-//							cout<<"\n\nHIT something Vertiecs.size() " <<object.Vertiecs.size() <<endl;
-//
-//							for(int i =0; i< object.Vertiecs.size() ; i++){
-//									cout<< "Vertiecs:"<< i << "\n "<<object.Vertiecs[i].toString()<<endl;
-//									cout<<"     VerticesFaces[j]";
-//									for(int j =0; j< object.Vertiecs[i].VerticesFaces.size() ; j++){
-//										cout<< object.Vertiecs[i].VerticesFaces[j] << " " ;
-//									}
-//									cout<<"\n ";
-//								};
-
-
+	for(objFile object : OBJs){
+				for(Face face : object.Faces){
+								if (ray.RayTriangleInterection(face) > 0){// checking if the ray actually hits the face
+												HIT = true;
+									}
+				}
+		}
 	return HIT;
 }
 

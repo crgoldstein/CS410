@@ -22,7 +22,7 @@ point::point( const double X, const double Y, const double Z){
 		VerticesFaces = vector<int>();
 		this->index =-1;
 }
-point::point( const double X, const double Y, const double Z,const double Index) {
+point::point( const double X, const double Y, const double Z,const int Index) {
 	this->x = X;
 	this->y = Y;
 	this->z = Z;
@@ -60,6 +60,20 @@ string point:: toString(){
 	return "index "+ to_string(this->index)+"X "+ to_string(this->x) + ", Y "+ to_string(this->y) + ", Z "+ to_string(this->z)
 			+ ", VerticesFaces.size() "+to_string(VerticesFaces.size());
 }
+
+
+int  point:: compare (const point &p) {
+
+   if ( this->x < p.x ||  this->y< p.y ||  this->z< p.z) {
+      return -1;
+   }
+   else  if ( this->x > p.x ||  this->y > p.y ||  this->z > p.z) {
+       return 1;
+    }
+   //They are the same
+   return 0;
+}
+
 
 point::~point() {
 	// TODO Auto-generated destructor stub

@@ -3,7 +3,7 @@ look 0 -2 0
 up 0 1 0
 d 30
 bounds -2 -2 2 2
-res 512 512
+res 256 256
 recursionLevel 0
 ambient 0.2 0.2 0.2
 light 20 60 50 1 0.7 0.2 0.3

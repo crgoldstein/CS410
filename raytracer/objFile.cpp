@@ -18,8 +18,11 @@ objFile::objFile(){
 		 OBJName ="Null";
 }
 
-objFile::objFile(const string Driver) {
+objFile::objFile(const int i, const string Driver) {
 cout<<"objFile constructor"<<endl;
+cout<< "i "<< i<<endl;
+		Index = i;
+		cout<< "Index "<< Index<<endl;
 		vector<string> results;
 		boost::split(results, Driver,boost::is_any_of(" "));
 		//  0	1	2	3 	4  5  6  7    8      9    10
@@ -158,15 +161,9 @@ void objFile:: MakeFaces(string &MaterialString){
 		Vertiecs[A].AddFace(i);
 		Vertiecs[B].AddFace(i);
 		Vertiecs[C].AddFace(i);
+		cout<<"Index "<<Index<<endl;
+		Face face1(this->Index,i, Vertiecs[A],Vertiecs[B],Vertiecs[C], M, smooth);
 
-		Face face1(Vertiecs[A],Vertiecs[B],Vertiecs[C], M, smooth, this);
-
-//		printf("Face F toString \n %s\n",  face1.toString().c_str() );
-//
-//		printf("A%d  Vertiecs[A] %s \n",A,  Vertiecs[A].toString().c_str() );
-//		printf("B%d  Vertiecs[B] %s \n",B,  Vertiecs[B].toString().c_str() );
-//		printf("C%d  Vertiecs[C] %s \n",C,  Vertiecs[C].toString().c_str() );
-//	    printf("Face F toString \n %s\n",  face1.toString().c_str() );
 		Faces.push_back(face1);
 
 	}
@@ -174,22 +171,6 @@ void objFile:: MakeFaces(string &MaterialString){
 	cout<<"OBJFILE\nFaces.size() " <<Faces.size() <<endl;
 		cout<<"Face:"<< Faces.size() -1 <<"TO String()\n"<<Faces[Faces.size() -1].toString()<<endl;
 
-	// for(int i =0; i< Faces.size()/10 ; i++){
-	// 	cout<<"Face:"<< i << "\n "<<Faces[i].toString()<<endl;
-	//
-	// 	cout<<"Face:"<< i << "\n Faces[i].modle->smooth  "<<Faces[i].modle->smooth<<endl;
-	// };
-//
-//	cout<<"\n\nVertiecs.size() " <<Vertiecs.size() <<endl;
-//
-//	for(int i =0; i< Vertiecs.size() ; i++){
-//			cout<< "Vertiecs:"<< i << "\n "<<Vertiecs[i].toString()<<endl;
-//			cout<<"     VerticesFaces[j]";
-//			for(int j =0; j< Vertiecs[i].VerticesFaces.size() ; j++){
-//				cout<< Vertiecs[i].VerticesFaces[j] << " " ;
-//			}
-//			cout<<"\n ";
-//		};
 
 
 }
@@ -210,7 +191,7 @@ void objFile:: MakeVertiecsFromV(){
 		double b = strtof((results[2]).c_str(),0);
 		double c = strtof((results[3]).c_str(),0);
 
-    	point newPoint(a,b,c,i);
+    	point newPoint(a,b,c,(int)i);
     	Vertiecs.push_back(newPoint);
 	}
 

@@ -20,7 +20,7 @@ class point {
 
 public:
 	point();
-	point(const double X, const double Y, const double Z, const double Index);
+	point(const double X, const double Y, const double Z, const int Index);
 	point( const double X, const double Y, const double Z);
 	double getX();
 	double getY();
@@ -31,11 +31,13 @@ public:
 
 	string toString();
 	point Vector2Point(const Eigen::Vector3d &v);
+	int  compare (const point& p) ;
 
 	virtual ~point();
 
 private:
-	double x,y,z,index;
+	double x,y,z;
+	int index;
 
 };
 

@@ -17,20 +17,23 @@
 #include <string>
 
 using namespace std;
-class objFile;
+//class objFile;
 
 class Face {
 public:
 	Face();
-	Face( const point &a,  const point &B, const point &C, const Materials &M, bool isSmooth, objFile *Modle );
+	Face( int i, int j, const point &a,  const point &B, const point &C, const Materials &M, bool isSmooth);
 	void calulateNormal();
 	Eigen::Vector3d getNormal() ;
 	void setNormal(const Eigen::Vector3d n);
 	virtual ~Face();
 	string toString();
+	int  compare (const Face& f) ;
 
+	int OBJindex;
+	int FaceIndex;
   bool smooth;
-	objFile *modle;
+	//objFile *modle;
 
 
 	point A;

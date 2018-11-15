@@ -90,15 +90,15 @@ int main(int argc, char* argv[])
 
 
 		vector<objFile> OBJs;
-		for (string M : model){
-			 OBJs.push_back(objFile (M));
+    for(int i =0; i<model.size();i++){
+			 OBJs.push_back(objFile (i, model[i]));
 		}
 
 		 // Set Up Camera model
 		 CameraModel CAMERA(cameraElements,Lighting,backgorundLight,OBJs,sph);
 //
-		 // vector<vector<ColorTriple> >  FileColor = CAMERA.Run();
-		 // ppmFile.write(FileColor);
+		 vector<vector<ColorTriple> >  FileColor = CAMERA.Run();
+		 ppmFile.write(FileColor);
 		 return 0;
 	}
 

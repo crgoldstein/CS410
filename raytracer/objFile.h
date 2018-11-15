@@ -22,12 +22,13 @@ using namespace std;
 class objFile {
 
 public:
-	objFile(const string DriverFile);
+	objFile(const int i, const string DriverFile);
 	objFile();
 	virtual ~objFile();
 	vector<Face> Faces;     // List of faces
 	vector<point> Vertiecs; // List of faces
 	bool smooth;
+	int Index;
 	string toString();
 
 private:
