@@ -88,7 +88,6 @@ int main(int argc, char* argv[])
 			sph.push_back(Sphere (S));
 		}
 
-
 		vector<objFile> OBJs;
     for(int i =0; i<model.size();i++){
 			 OBJs.push_back(objFile (i, model[i]));

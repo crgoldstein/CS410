@@ -11,14 +11,13 @@
 
 
 Ray::Ray(){
-	    pointL << 0,0,0;
+	  pointL << 0,0,0;
 		Direction  << 0,0,0;
 
 		minTface=numeric_limits<double>::max();
 		minGamma = numeric_limits<double>::max();
 		minBeta = numeric_limits<double>::max();
 		closestFace=Face();
-		closestModel =objFile();
 
 		minTsphere =numeric_limits<double>::max();
 		ClosestSphere = Sphere();
@@ -38,31 +37,9 @@ Ray::Ray(const Eigen::Vector3d &P, const Eigen::Vector3d &D) {
 
 	minTsphere = numeric_limits<double>::max();
 	ClosestSphere = Sphere();
-	closestModel = objFile();
 
 }
 
-
-bool Ray:: RayModleInterection(objFile &M){
-				double LastT =minTface;
-				double t = 0;
-				bool hit=false;
-				//cout<<"RayModleInterection " <<endl;
-				for(Face face : M.Faces){
-					  if (RayTriangleInterection(face) > 0){
-						  t = RayTriangleInterection(face);
-						  hit = true;
-					  }
-				}
-
-
-				if( t< LastT)
-					closestModel = M;
-
-
-
-				return hit;
-   }
 double Ray:: RayTriangleInterection(Face &f){
 	//Cramer's Rule.
 		//This approach involves solving for the determinants of four matrices,

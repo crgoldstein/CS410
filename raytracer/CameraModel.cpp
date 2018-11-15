@@ -24,44 +24,20 @@ CameraModel::CameraModel(vector<string> &Driver, vector<LightSource> &LightS,
 						AmbientLight &ambient, vector<objFile> &Objs , vector<Sphere> &Sphs){
 	cout<<"\n\n CameraModel Constrcutor! \n"<<endl;
 
-    LightSourcesList = LightS;
+  LightSourcesList = LightS;
 	Ambient = ambient;
 	OBJs = Objs;
-
-
-//	printf("OBJs.size() %d ", OBJs.size());
-	for(objFile object : OBJs){
-		cout<<"Face: "<< object.Faces.size() -1<<" to string of \n "<<object.Faces[object.Faces.size() -1].toString()<<endl;
- 		cout<<"\n object toString "<< object.toString()<<endl;
-
-
-	}
-//
-//			cout<<"Faces.size() " <<object.Faces.size() <<endl;
-//				for(int i =0; i< object.Faces.size()/10 ; i++){
-//					cout<<"Face:"<< i << "\n "<<object.Faces[i].toString()<<endl;
-//
-//					cout<<"Face:"<< i << "\n object.Faces[i].modle->smooth  "<<object.Faces[i].modle->smooth<<endl;
-//				};
-//
-//				cout<<"\n\nVertiecs.size() " <<object.Vertiecs.size() <<endl;
-//
-//				for(int i =0; i< object.Vertiecs.size() ; i++){
-//						cout<< "Vertiecs:"<< i << "\n "<<object.Vertiecs[i].toString()<<endl;
-//						cout<<"     VerticesFaces[j]";
-//						for(int j =0; j< object.Vertiecs[i].VerticesFaces.size() ; j++){
-//							cout<< object.Vertiecs[i].VerticesFaces[j] << " " ;
-//						}
-//						cout<<"\n ";
-//					};
-//  }
 	SPHs = Sphs;
 
+//	printf("OBJs.size() %d ", OBJs.size());
+	// for(objFile object : OBJs){
+	// 	cout<<"Face: "<< object.Faces.size() -1<<" to string of \n "<<object.Faces[object.Faces.size() -1].toString()<<endl;
+ 	// 	cout<<"\n object toString "<< object.toString()<<endl;
+	// }
+
+
+
 		for (int i =  0; i < Driver.size(); i++){
-
-
-			cout<<Driver[i]<<endl;
-
 					vector<string> line;
 					boost::split(line, Driver[i] ,boost::is_any_of(" "));
 
@@ -139,15 +115,6 @@ Eigen::Vector3d CameraModel :: pixelPt(const int i, const int j){
 }
 
 Eigen::Vector3d CameraModel:: SmoothSurface(Ray &ray){
-cout<<"SmoothSurface"<<endl;
-	// objFile CorrectModle;
-	// 	for(objFile object : OBJs){
-	// 		cout<<"		ray.closestFace.compare(object.FacesList[ray.closestFace.index])"<<ray.closestFace.compare(object.Faces[ray.closestFace.FaceIndex])<<endl;
-	// 			if(ray.closestFace.compare(object.Faces[ray.closestFace.FaceIndex]) == 0){
-	// 				CorrectModle = object;
-	// 				break;
-	// 			}
-	// 	}
 
 	Eigen::Vector3d NormalA = getAverageNormal(ray.closestFace.normal,ray.closestFace.A.VerticesFaces,OBJs[ray.closestFace.OBJindex].Faces);
 	Eigen::Vector3d NormalB = getAverageNormal(ray.closestFace.normal,ray.closestFace.B.VerticesFaces,OBJs[ray.closestFace.OBJindex].Faces);
@@ -157,7 +124,6 @@ cout<<"SmoothSurface"<<endl;
 }
 
 Eigen::Vector3d CameraModel:: getAverageNormal( Eigen::Vector3d  &Normal, vector<int> &VerticesFaces, vector<Face> &Faces){
-cout<<"getAverageNormal "<<endl;
 	Eigen::Vector3d AverageNormal(0,0,0);
 	int count = 0;
 
@@ -178,18 +144,14 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 	if (HitsSomething(ray)){
 
 		if (ray.minTface < ray.minTsphere){ //Triangle is Closer
-			  cout<<"hit Triangle"<<endl;
+
 				Eigen::Vector3d  TriangleNormal(ray.closestFace.normal);
 
-
-				cout<<"ray.closestFace.smooth "<<ray.closestFace.smooth<<endl;
-
 				if(ray.closestFace.smooth){
-					TriangleNormal = SmoothSurface(ray);
+					  TriangleNormal = SmoothSurface(ray);
 				}
 
 				Eigen::Vector3d pnt(ray.pointL + ray.minTface * ray.Direction.normalized());
-
 				color = COLOR_PIXEL(ray, TriangleNormal, ray.closestFace.Material, pnt);
 				accumm[0] += color(0) * Refatt(0) ;//red
 				accumm[1] += color(1) * Refatt(1) ;//green

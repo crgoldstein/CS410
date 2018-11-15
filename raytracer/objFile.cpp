@@ -19,8 +19,8 @@ objFile::objFile(){
 }
 
 objFile::objFile(const int i, const string Driver) {
-cout<<"objFile constructor"<<endl;
-cout<< "i "<< i<<endl;
+// cout<<"objFile constructor"<<endl;
+// cout<< "i "<< i<<endl;
 		Index = i;
 		cout<< "Index "<< Index<<endl;
 		vector<string> results;
@@ -128,10 +128,10 @@ void objFile::setVpoints(Eigen::MatrixXd &points) {
 void objFile:: MakeFaces(string &MaterialString){
 	Materials M(MaterialString);
 	point Apoint; point Bpoint; point Cpoint;
-	vector<Face> FacesList (f.size());
-	cout<<"f.size()"<<f.size()<<endl;
-	cout<<"Faces.size()"<<Faces.size()<<endl;
-	cout<<"FacesList.size()"<<FacesList.size()<<endl;
+	// vector<Face> FacesList (f.size());
+	// cout<<"f.size()"<<f.size()<<endl;
+	// cout<<"Faces.size()"<<Faces.size()<<endl;
+	// cout<<"FacesList.size()"<<FacesList.size()<<endl;
 
 	for(int i = 0; i< f.size(); i++){
 		//cout<<"face["<<i<<"]"<<endl;
@@ -154,22 +154,18 @@ void objFile:: MakeFaces(string &MaterialString){
 			int C = stoi(SlashC[0]) -1;
 
 		//Make points
-//		printf("A%d  Vertiecs[A] %s \n",A,  Vertiecs[A].toString().c_str() );
-//		printf("B%d  Vertiecs[B] %s \n",B,  Vertiecs[B].toString().c_str() );
-//		printf("C%d  Vertiecs[C] %s \n",C,  Vertiecs[C].toString().c_str() );
 
 		Vertiecs[A].AddFace(i);
 		Vertiecs[B].AddFace(i);
 		Vertiecs[C].AddFace(i);
-		cout<<"Index "<<Index<<endl;
-		Face face1(this->Index,i, Vertiecs[A],Vertiecs[B],Vertiecs[C], M, smooth);
+		Face face1(this->Index, i, Vertiecs[A],Vertiecs[B],Vertiecs[C], M, smooth);
 
 		Faces.push_back(face1);
 
 	}
 //
-	cout<<"OBJFILE\nFaces.size() " <<Faces.size() <<endl;
-		cout<<"Face:"<< Faces.size() -1 <<"TO String()\n"<<Faces[Faces.size() -1].toString()<<endl;
+	// cout<<"OBJFILE\nFaces.size() " <<Faces.size() <<endl;
+	// 	cout<<"Face:"<< Faces.size() -1 <<"TO String()\n"<<Faces[Faces.size() -1].toString()<<endl;
 
 
 
