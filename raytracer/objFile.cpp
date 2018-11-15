@@ -159,7 +159,7 @@ void objFile:: MakeFaces(string &MaterialString){
 		Vertiecs[B].AddFace(i);
 		Vertiecs[C].AddFace(i);
 
-		Face face1(Vertiecs[A],Vertiecs[B],Vertiecs[C], M, this);
+		Face face1(Vertiecs[A],Vertiecs[B],Vertiecs[C], M, smooth, this);
 
 //		printf("Face F toString \n %s\n",  face1.toString().c_str() );
 //
@@ -172,11 +172,13 @@ void objFile:: MakeFaces(string &MaterialString){
 	}
 //
 	cout<<"OBJFILE\nFaces.size() " <<Faces.size() <<endl;
-	for(int i =0; i< Faces.size()/10 ; i++){
-		cout<<"Face:"<< i << "\n "<<Faces[i].toString()<<endl;
+		cout<<"Face:"<< Faces.size() -1 <<"TO String()\n"<<Faces[Faces.size() -1].toString()<<endl;
 
-		cout<<"Face:"<< i << "\n Faces[i].modle->smooth  "<<Faces[i].modle->smooth<<endl;
-	};
+	// for(int i =0; i< Faces.size()/10 ; i++){
+	// 	cout<<"Face:"<< i << "\n "<<Faces[i].toString()<<endl;
+	//
+	// 	cout<<"Face:"<< i << "\n Faces[i].modle->smooth  "<<Faces[i].modle->smooth<<endl;
+	// };
 //
 //	cout<<"\n\nVertiecs.size() " <<Vertiecs.size() <<endl;
 //
@@ -194,7 +196,7 @@ void objFile:: MakeFaces(string &MaterialString){
 
 
 string objFile:: toString(){
-	return "\nObjFile : "+ OBJName + " Smooth "+ to_string(smooth)+ "  Faces.size  "+ to_string(Faces.size())+ " Vertiecs  "+ to_string(Vertiecs.size());
+	return " ObjFile : "+ OBJName + " Smooth "+ to_string(smooth)+ "  Faces.size  "+ to_string(Faces.size())+ " Vertiecs  "+ to_string(Vertiecs.size());
 
 }
 

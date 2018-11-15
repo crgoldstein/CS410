@@ -97,12 +97,11 @@ int main(int argc, char* argv[])
 		 // Set Up Camera model
 		 CameraModel CAMERA(cameraElements,Lighting,backgorundLight,OBJs,sph);
 //
-		 vector<vector<ColorTriple> >  FileColor = CAMERA.Run();
-		 ppmFile.write(FileColor);
+		 // vector<vector<ColorTriple> >  FileColor = CAMERA.Run();
+		 // ppmFile.write(FileColor);
 		 return 0;
 	}
 
 
 	return 0;
 }
-

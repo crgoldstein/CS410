@@ -18,12 +18,13 @@ Face::Face() {
 
 }
 
-Face::Face(const point &a,  const point &B, const point &C, const Materials &M, objFile *Modle ){
+Face::Face(const point &a,  const point &B, const point &C, const Materials &M, bool isSmooth, objFile *Modle ){
 	this->A = a;
 	this->B = B;
 	this->C = C;
 	calulateNormal();
 	Material = M;
+	smooth = isSmooth;
 	modle = Modle;
 }
 
@@ -46,9 +47,9 @@ void Face::setNormal(const Eigen::Vector3d  n){
 }
 
 string Face::toString(){
-	return " point A: "+ A.toString()+"\n point B: "+ B.toString() +"\n point C: "+C.toString()
-			+"\n Normal "+ to_string(normal(0))+ " "+ to_string(normal(1))+ " "+ to_string(normal(2))
-			+"Model "+ modle->toString() ;//+ "\n 	Materials :" + Material.toString();
+	return "\n	point A: "+ A.toString()+"\n	point B: "+ B.toString() +"\n	point C: "+C.toString()
+			+"\n	Normal "+ to_string(normal(0))+ " "+ to_string(normal(1))+ " "+ to_string(normal(2))
+			+"\n	Model "+ modle->toString() ;//+ "\n 	Materials :" + Material.toString();
 }
 
 

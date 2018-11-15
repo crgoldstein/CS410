@@ -30,7 +30,11 @@ CameraModel::CameraModel(vector<string> &Driver, vector<LightSource> &LightS,
 
 
 //	printf("OBJs.size() %d ", OBJs.size());
-//		for(objFile object : OBJs){
+	for(objFile object : OBJs){
+		cout<<"Face: "<< object.Faces.size() -1<<" to string of \n "<<object.Faces[object.Faces.size() -1].toString()<<endl;
+ 		cout<<"\n object toString "<< object.toString()<<endl;;
+
+	}
 //
 //			cout<<"Faces.size() " <<object.Faces.size() <<endl;
 //				for(int i =0; i< object.Faces.size()/10 ; i++){
@@ -167,7 +171,7 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 			cout<<"hit Triangle"<<endl;
 				Eigen::Vector3d  TriangleNormal(ray.closestFace.normal);
 				cout<<"ray.closestModel.smooth "<<ray.closestModel.smooth<<endl;
-				if(ray.closestModel.smooth){
+				if(ray.closestFace.smooth){
 					TriangleNormal = SmoothSurface(ray);
 				}
 				Eigen::Vector3d pnt(ray.pointL + ray.minTface * ray.Direction.normalized());
@@ -362,4 +366,3 @@ printf("Run\n height %d width %d \n",height, width);
 CameraModel::~CameraModel() {
 	// TODO Auto-generated destructor stub
 }
-

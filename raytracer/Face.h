@@ -22,13 +22,14 @@ class objFile;
 class Face {
 public:
 	Face();
-	Face( const point &a,  const point &B, const point &C, const Materials &M, objFile *Modle );
+	Face( const point &a,  const point &B, const point &C, const Materials &M, bool isSmooth, objFile *Modle );
 	void calulateNormal();
 	Eigen::Vector3d getNormal() ;
 	void setNormal(const Eigen::Vector3d n);
 	virtual ~Face();
 	string toString();
 
+  bool smooth;
 	objFile *modle;
 
 
