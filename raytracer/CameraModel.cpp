@@ -120,7 +120,7 @@ Eigen::Vector3d CameraModel:: SmoothSurface(Ray &ray){
 	Eigen::Vector3d NormalB = getAverageNormal(ray.closestFace.normal,ray.closestFace.B.VerticesFaces,OBJs[ray.closestFace.OBJindex].Faces);
 	Eigen::Vector3d NormalC = getAverageNormal(ray.closestFace.normal,ray.closestFace.C.VerticesFaces,OBJs[ray.closestFace.OBJindex].Faces);
 	// Ni = (1 - beta - gamma)NormalA + beta*NormalB  + gamma*NormalC
-	return (1 - ray.minBeta - ray.minGamma)*(NormalA) + ray.minBeta*NormalB  + ray.minGamma*NormalC;
+	return (1 - ray.minBeta - ray.minGamma)*(NormalA.normalized()) + ray.minBeta*(NormalB.normalized())  + ray.minGamma*(NormalC.normalized());
 }
 
 Eigen::Vector3d CameraModel:: getAverageNormal( Eigen::Vector3d  &Normal, vector<int> &VerticesFaces, vector<Face> &Faces){
@@ -149,6 +149,7 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 
 				if(ray.closestFace.smooth){
 					  TriangleNormal = SmoothSurface(ray);
+						TriangleNormal =	TriangleNormal.normalized();
 				}
 
 				Eigen::Vector3d pnt(ray.pointL + ray.minTface * ray.Direction.normalized());
@@ -190,7 +191,7 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 
 
 				//Recrisive
-				cout<<"depth "<<depth<<endl;
+				// cout<<"depth "<<depth<<endl;
 					if (depth > 0){
 
 							Eigen::MatrixXd Kr = Eigen::MatrixXd::Identity(3, 3);
