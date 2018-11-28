@@ -12,7 +12,7 @@
 
 Ray::Ray(){
 	  pointL << 0,0,0;
-		Direction  << 0,0,0;
+		Direction << 0,0,0;
 
 		minTface=numeric_limits<double>::max();
 		minGamma = numeric_limits<double>::max();

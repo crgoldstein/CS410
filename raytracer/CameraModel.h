@@ -40,7 +40,7 @@ private:
 	Eigen::Vector3d pixelPt(const int i,const int j);
 
 	void RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, int depth);
-	Eigen::Vector3d  COLOR_PIXEL (Ray &ray, Eigen::Vector3d &Normal, Materials &Mat, Eigen::Vector3d &pnt );
+	void COLOR_PIXEL (Ray &ray, Eigen::Vector3d &Normal, Materials &Mat, Eigen::Vector3d &pnt, Eigen::Vector3d &Refatt, double *accumm );
 	bool HitsSomething(Ray &ray);
 	Eigen::Vector3d SmoothSurface(Ray &ray);
 

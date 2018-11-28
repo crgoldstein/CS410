@@ -1,9 +1,7 @@
 # Alias OBJ Model File
 # Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
 # File units = meters
-
 mtllib cage_one_face.mtl
-
 g Mesh1 Model
 
 usemtl FrontColor

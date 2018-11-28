@@ -16,20 +16,27 @@
 
 Materials::Materials() {
 
-	this->KaRed= 0;
-	this->KaGreen= 0;
-	this->KaBlue= 0;
-	this->KdRed= 0;
-	this->KdGreen= 0;
-	this->KdBlue= 0;
-	this->KsRed= 0;
-	this->KsGreen= 0;
-	this->KsBlue= 0;
+	this->KaRed = 0;
+	this->KaGreen = 0;
+	this->KaBlue = 0;
+	this->KdRed = 0;
+	this->KdGreen = 0;
+	this->KdBlue = 0;
+	this->KsRed = 0;
+	this->KsGreen = 0;
+	this->KsBlue = 0;
 
 	this->phong=0;
+
 	this->KrRed= 0;
 	this->KrGreen= 0;
 	this->KrBlue= 0;
+
+	this->KoRed= 0;
+	this->KoGreen= 0;
+	this->KoBlue= 0;
+
+	this->Eta = 0;
 }
 
 Materials::Materials(vector<double> SphereInfo){
@@ -50,10 +57,16 @@ Materials::Materials(vector<double> SphereInfo){
 		this->KrGreen= SphereInfo[10];
 		this->KrBlue= SphereInfo[11];
 
+		this->KoRed= SphereInfo[12];
+		this->KoGreen= SphereInfo[13];
+		this->KoBlue= SphereInfo[14];
+
+		this->Eta= SphereInfo[15];
+
 		this->phong=16;
+	//	cout<<" To string "<< toString()<<endl;
 
 }
-
 
 Materials::Materials(string fileName){
 
@@ -96,27 +109,29 @@ Materials::Materials(string fileName){
 						KsBlue= strtof(matLine[3].c_str(),0);
 					}
 
-
 					if (matLine[0].compare("Ns")==0){
 						phong = strtof(matLine[1].c_str(),0);
 					}
 				}
 				KrRed = 1;KrGreen = 1;KrBlue = 1;
+				KoRed = 1;KoGreen = 1;KoBlue = 1;
+
 }
 
 
 Eigen::Vector3d Materials::getKaVector(){
-
 	Eigen::Vector3d vectorKA(KaRed, KaGreen, KaBlue );
 	return vectorKA;
 
 }
+
 Eigen::Vector3d Materials:: getKdVector(){
 
 		Eigen::Vector3d vectorKd(KdRed, KdGreen, KdBlue );
 		return vectorKd;
 
 }
+
 Eigen::Vector3d Materials:: getKsVector(){
 
 			Eigen::Vector3d vectorKs(KsRed, KsGreen, KsBlue) ;
@@ -128,7 +143,9 @@ string Materials::toString(){
 	return    "\n		Ka: "+ to_string(KaRed) + " "+ to_string(KaGreen) + " "+ to_string(KaBlue)
 			+ "\n		Kd: "+ to_string(KdRed) + " "+ to_string(KdGreen) + " "+ to_string(KdBlue)
 			+ "\n		Ks: "+ to_string(KsRed) + " "+ to_string(KsGreen) + " "+ to_string(KsBlue)
-			+ "\n		Kr: "+ to_string(KrRed) + " "+ to_string(KrGreen) + " "+ to_string(KrBlue) ;
+			+ "\n		Kr: "+ to_string(KrRed) + " "+ to_string(KrGreen) + " "+ to_string(KrBlue)
+
+			+ "\n		Ko: "+ to_string(KoRed) + " "+ to_string(KoGreen) + " "+ to_string(KoBlue)  ;
 }
 
 Materials::~Materials() {

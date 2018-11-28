@@ -47,6 +47,12 @@ public:
 	double KrGreen;
 	double KrBlue;
 
+	double KoRed;
+	double KoGreen;
+	double KoBlue;
+
+	double Eta;
+
 };
 
 #endif /* MATERIALS_H_ */

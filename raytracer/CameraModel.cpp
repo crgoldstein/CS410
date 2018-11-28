@@ -7,7 +7,6 @@
 
 #include "CameraModel.h"
 
-
 #include <iostream>
 #include <Eigen/Geometry>
 
@@ -142,82 +141,95 @@ void CameraModel:: RAY_CAST(Ray &ray, Eigen::Vector3d &Refatt, double *accumm, i
 	//printf("HIT something Recrisive depth %d > accumm is [ %f , %f , %f] \n",depth,accumm[0],accumm[1],accumm[2]);
 
 	if (HitsSomething(ray)){
+				if (ray.minTface < ray.minTsphere){ //Triangle is Closer
+								Eigen::Vector3d TriangleNormal(ray.closestFace.normal);
+								if(ray.closestFace.smooth){
+									  TriangleNormal = SmoothSurface(ray);
+										TriangleNormal =	TriangleNormal.normalized();
+								}
+								Eigen::Vector3d pnt(ray.pointL + ray.minTface * ray.Direction.normalized());
+								COLOR_PIXEL(ray, TriangleNormal, ray.closestFace.Material, pnt, Refatt,accumm);
 
-		if (ray.minTface < ray.minTsphere){ //Triangle is Closer
+								//Recrisive
+									if (depth > 0){
+										Eigen::MatrixXd Kr = Eigen::MatrixXd::Identity(3, 3);
+										Kr(0,0)=ray.closestFace.Material.KrRed;
+										Kr(1,1)=ray.closestFace.Material.KrGreen;
+										Kr(2,2)=ray.closestFace.Material.KrBlue;
 
-				Eigen::Vector3d  TriangleNormal(ray.closestFace.normal);
+										Refatt =  Kr * Refatt;
 
-				if(ray.closestFace.smooth){
-					  TriangleNormal = SmoothSurface(ray);
-						TriangleNormal =	TriangleNormal.normalized();
+										Eigen::Vector3d  NewDir = -1 * ray.Direction;
+										Eigen::Vector3d refR = ((2 * TriangleNormal.dot(NewDir)) * TriangleNormal) - NewDir ;
+										refR = refR.normalized();
+										Ray newRay(pnt , refR);
+
+										RAY_CAST(newRay , Refatt, accumm, depth-1);
+									}
+									else{
+										return ;
+									}
 				}
+				else{//Sphere is closer
+								//printf("Ray %s \n ",ray.toString().c_str());
+								Eigen::Vector3d pnt(ray.pointL + ray.minTsphere * ray.Direction.normalized());
 
-				Eigen::Vector3d pnt(ray.pointL + ray.minTface * ray.Direction.normalized());
-				color = COLOR_PIXEL(ray, TriangleNormal, ray.closestFace.Material, pnt);
-				accumm[0] += color(0) * Refatt(0) ;//red
-				accumm[1] += color(1) * Refatt(1) ;//green
-				accumm[2] += color(2) * Refatt(2) ;//blue
+								Eigen::Vector3d r(ray.ClosestSphere.Center.getVector());
 
-				//Recrisive
-					if (depth > 0){
-						Eigen::MatrixXd Kr = Eigen::MatrixXd::Identity(3, 3);
-						Kr(0,0)=ray.closestFace.Material.KrRed;
-						Kr(1,1)=ray.closestFace.Material.KrGreen;
-						Kr(2,2)=ray.closestFace.Material.KrBlue;
+								Eigen::Vector3d SphereNormal(pnt - r); SphereNormal = SphereNormal.normalized();
 
-						Refatt =  Kr * Refatt;
+								COLOR_PIXEL(ray, SphereNormal, ray.ClosestSphere.Material, pnt, Refatt,accumm);// adding the color to the accum
 
-						Eigen::Vector3d  NewDir = -1 * ray.Direction;
-						Eigen::Vector3d refR = ((2 * TriangleNormal.dot(NewDir)) * TriangleNormal) - NewDir ;
-						refR= refR.normalized();
-						Ray newRay(pnt , refR);
+								Eigen::Vector3d DirInverse = -1 * ray.Direction;
 
-						RAY_CAST(newRay , Refatt, accumm, depth-1);
-					   }
-					else{
-						return ;
-					}
-			}
-			else{//Sphere is closer
+								Eigen::MatrixXd Kr = Eigen::MatrixXd::Identity(3, 3);
+								Kr(0,0) = ray.ClosestSphere.Material.KrRed;	Kr(1,1) = ray.ClosestSphere.Material.KrGreen; Kr(2,2) = ray.ClosestSphere.Material.KrBlue;
 
-				Eigen::Vector3d pnt(ray.pointL + ray.minTsphere * ray.Direction.normalized());
-				Eigen::Vector3d r(ray.ClosestSphere.Center.getVector());
-				Eigen::Vector3d SphereNormal(pnt - r); SphereNormal = SphereNormal.normalized();
+								//ReFlection:
+								if (depth > 0){
+											double flec[] = {0,0,0};
+											Eigen::Vector3d refR = (2 * SphereNormal.dot(DirInverse) * SphereNormal) - DirInverse ;
+											refR = refR.normalized().eval();
+											Ray newRay(pnt , refR);
+											Refatt = Kr * Refatt;
+											// cout<<"IN ReFLECtion"<<endl;
+											// cout<<"pnt "<<pnt(0)<<" "<<pnt(1)<<" "<<pnt(2)<<endl;
+											// cout<<"ray.Direction "<<ray.Direction(0)<<" "<<ray.Direction(1)<<" "<<ray.Direction(2)<<endl;
+											// cout<<"DirInverse "<<DirInverse(0)<<" "<<DirInverse(1)<<" "<<DirInverse(2)<<endl;
 
-				color = COLOR_PIXEL(ray, SphereNormal, ray.ClosestSphere.Material, pnt);
-				accumm[0] += color(0) * Refatt(0) ;//red
-				accumm[1] += color(1) * Refatt(1) ;//green
-				accumm[2] += color(2) * Refatt(2) ;//blue
+											RAY_CAST(newRay ,Refatt, flec, depth-1);
+												 accumm[0] += Refatt(0) * flec[0] * ray.ClosestSphere.Material.KoRed;//red
+												 accumm[1] += Refatt(1) * flec[1] * ray.ClosestSphere.Material.KoGreen ;//green
+												 accumm[2] += Refatt(2) * flec[2] * ray.ClosestSphere.Material.KoBlue ;//blue
+										}
+								// Refratction
+								if(depth > 0 && (ray.ClosestSphere.Material.KoRed + ray.ClosestSphere.Material.KoGreen + ray.ClosestSphere.Material.KoBlue ) < 3.0) {
+											//cout<<"IN Refratction"<<endl;
+											double thru[] = {0,0,0};
+											//cout<<"pnt "<<pnt(0)<<" "<<pnt(1)<<" "<<pnt(2)<<endl;
+											//cout<<"ray.Direction "<<ray.Direction(0)<<" "<<ray.Direction(1)<<" "<<ray.Direction(2)<<endl;
+											//cout<<"DirInverse "<<DirInverse(0)<<" "<<DirInverse(1)<<" "<<DirInverse(2)<<endl;
+											Ray fraR = ray.ClosestSphere.refract_exit(DirInverse, pnt, ray.ClosestSphere.Material.Eta);
 
-
-				//Recrisive
-				// cout<<"depth "<<depth<<endl;
-					if (depth > 0){
-
-							Eigen::MatrixXd Kr = Eigen::MatrixXd::Identity(3, 3);
-							Kr(0,0) = ray.ClosestSphere.Material.KrRed;
-							Kr(1,1) = ray.ClosestSphere.Material.KrGreen;
-							Kr(2,2) = ray.ClosestSphere.Material.KrBlue;
-							Refatt =  Kr * Refatt;
-
-							Eigen::Vector3d DirInverse = -1 * ray.Direction;
-							Eigen::Vector3d refR = (2 * SphereNormal.dot(DirInverse) * SphereNormal) - DirInverse ;
-							refR = refR.normalized().eval();
-							Ray newRay(pnt , refR);
-
-							RAY_CAST(newRay ,Refatt, accumm, depth-1);
-							return;
+											if (fraR.pointL(0)!=0 && fraR.pointL(1)!=0 && fraR.pointL(2)!=0
+														 && fraR.Direction(0)!=0 && fraR.Direction(1)!=0 && fraR.Direction(2)!=0 ){
+																	Refatt = Kr * Refatt;
+																	RAY_CAST(fraR, Refatt, thru, (depth - 1));
+																				accumm[0] +=  Refatt(0) * thru[0] * (1.0 - ray.ClosestSphere.Material.KoRed) ;//red
+																				accumm[1] +=  Refatt(1) * thru[1] * (1.0 - ray.ClosestSphere.Material.KoGreen) ;//green
+																				accumm[2] +=  Refatt(2) * thru[2] * (1.0 - ray.ClosestSphere.Material.KoBlue) ;//blue
+																	}
+											}//end of Refratction
+								else {
+											return;
+										}
 
 					}
-					else{
-						return;
-					}
 
-			}
-	}
-    else{// YOU DONT NOT HIT ANYTHING
+}
+  else{// YOU DONT NOT HIT ANYTHING
     	if(depth == 0){
-    		 ColorTriple background =ColorTriple();
+    		 ColorTriple background = ColorTriple();
     		 accumm[0] += (double) background.getRed() * Refatt(0) ;
     		 accumm[1] += (double) background.getGreen() * Refatt(1) ;//green
     		 accumm[2] += (double) background.getBlue() * Refatt(2) ;//blue
@@ -249,7 +261,7 @@ bool CameraModel::HitsSomething(Ray &ray){
 }
 
 
-Eigen::Vector3d CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3d &Normal, Materials &Mat, Eigen::Vector3d &pnt ){
+void CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3d &Normal, Materials &Mat, Eigen::Vector3d &pnt, Eigen::Vector3d &Refatt, double *accumm ){
 
 	Eigen::MatrixXd Ka = Eigen::MatrixXd::Identity(3, 3); Ka(0,0)=Mat.KaRed; Ka(1,1)=Mat.KaGreen; Ka(2,2)=Mat.KaBlue;
 	Eigen::MatrixXd Kd = Eigen::MatrixXd::Identity(3, 3); Kd(0,0)=Mat.KdRed; Kd(1,1)=Mat.KdGreen; Kd(2,2)=Mat.KdBlue;
@@ -286,12 +298,15 @@ Eigen::Vector3d CameraModel:: COLOR_PIXEL(Ray &ray, Eigen::Vector3d &Normal, Mat
 		}//end of forEach
 
     // write the resulting RGB into the pixel
-	return Illumination;
+		accumm[0] += Illumination(0) * Refatt(0) * Mat.KoRed;//red
+		accumm[1] += Illumination(1) * Refatt(1) * Mat.KoGreen;//green
+		accumm[2] += Illumination(2) * Refatt(2) * Mat.KoBlue;
+	return ;
 
 }
 
 vector<vector<ColorTriple> > CameraModel:: Run(){
-printf("Run\n height %d width %d \n",height, width);
+//printf("Run\n height %d width %d \n",height, width);
 	vector<vector<ColorTriple> > FileColor;
 
 	Eigen::Vector3d pixel, Direction;
@@ -303,17 +318,15 @@ printf("Run\n height %d width %d \n",height, width);
 							    // for each pixel hit into each face
 								//printf("in run [%d,%d] \n",x ,y);
 								pixel = pixelPt(x,y);
-								//printf("PIXEL %f %f %f \n ",pixel(0),pixel(1),pixel(2));
-								Direction = pixel - EyeV.getVector(); //(pixel point)- eye
-
+								//printf("PIXEL %f %f %f \n ",pixel(0), pixel(1), pixel(2));
+								Direction = pixel - EyeV.getVector(); //(pixel point) - eye
 								//printf("Direction %f %f %f \n ",Direction(0),Direction(1),Direction(2));
-								Ray r(pixel,Direction);
-								//printf("Ray %s \n ",r.toString().c_str());
+								Ray r(pixel,Direction.normalized());
 								Eigen::Vector3d Refatt(1,1,1);
 								double accumm[] = {0,0,0};
 								RAY_CAST(r, Refatt, accumm, recursionLevel);
 								ColorTriple rgb(accumm[0],accumm[1],accumm[2]);
-							    temp.push_back(rgb);
+							  temp.push_back(rgb);
 
 		}//end of ForLoop y
 		FileColor.push_back(temp);
