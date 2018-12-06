@@ -8,5 +8,7 @@ CS 410 teaches students how to program a computer to generate photo-realistic im
 
 This course will emphasize geometric objects and transformations, perspective projections, lighting and reflectance models, shading models, and 3D curves and surfaces. Students will design and implement a ray tracing program from scratch, thereby becoming intimately familiar with the sensor, lighting and object models described above. Perhaps most importantly, students may come to more fully appreciate the power of linear algebra.
 
+To see my final raytraced image please look at Scene2.jpg
+
 Professor: Ross Beveridge 
 Website: http://www.cs.colostate.edu/~cs410/yr2018fa/index.php
